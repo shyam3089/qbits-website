@@ -9,6 +9,7 @@ component PageContent:
     intro = ""
     loading = true
     error = ""
+    navigation = false
     sections = [] as ContentSection
     div class="page-content":
         if loading:
@@ -19,16 +20,27 @@ component PageContent:
                 p class="error-state" text=error
                 button class="small-button retry-page" text="Try again"
             else:
-                h1 class="content-title" text=title
-                p class="content-intro" text=intro
-                for section in sections key=section.id:
-                    section class="content-section":
-                        h2 text=section.title
-                        p text=section.body
-                        if section.code != "":
-                            div class="code-block":
-                                p text=section.code
-                                button class="copy-code" text="Copy code"
-                div class="content-footer":
-                    button class="text-button open-npm" text="View package on npm ↗"
-                    button class="text-button open-admin" text="Site settings"
+                div class="content-layout":
+                    if navigation:
+                        div class="section-sidebar":
+                            p class="section-sidebar-title" text="On this page"
+                            for section in sections key=section.id:
+                                button class="section-link" text=section.title
+                    div class="content-main":
+                        h1 class="content-title" text=title
+                        p class="content-intro" text=intro
+                        for section in sections key=section.id:
+                            section class="content-section":
+                                h2 text=section.title
+                                p text=section.body
+                                if section.code != "":
+                                    div class="code-block":
+                                        p text=section.code
+                                        button class="copy-code":
+                                            span class="fa-regular fa-copy copy-code-icon"
+                                            span class="visually-hidden copy-code-label" text="Copy code"
+                        div class="content-footer":
+                            button class="text-button open-npm":
+                                span text="View package on npm"
+                                span class="fa-solid fa-arrow-up-right-from-square external-icon"
+                            button class="text-button open-admin" text="Site settings"

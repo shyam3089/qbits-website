@@ -1,6 +1,6 @@
 # Qbits official website
 
-A working Qbits 1.0.1 frontend and Python FastAPI backend. The home page follows the supplied 1254 × 775 reference, including the GitHub curve and integrated command bar. Every view stays inside the frame.
+A working Qbits 1.0.1 frontend and Python FastAPI backend. The home page follows the supplied 1254 × 775 reference, including the GitHub curve and integrated command bar. Features, documentation, examples and roadmap pages use regular page scrolling with linked section navigation.
 
 ## Run locally (PowerShell)
 

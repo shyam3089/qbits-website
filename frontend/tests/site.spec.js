@@ -16,7 +16,7 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
     const { width, height } = shell.ownerSVGElement.viewBox.baseVal;
     const filled = (x, y) => shell.isPointInFill(new DOMPoint(x, y));
     return {
-      frame: rect('.site-frame'), hero: rect('.hero'), actions: rect('.hero-actions'),
+      frame: rect('.site-frame'), brand: rect('.brand'), github: rect('.github-button'), hero: rect('.hero'), actions: rect('.hero-actions'),
       shell: {
         fill: getComputedStyle(shell).fill,
         outerEdges: [filled(width / 4, 8), filled(8, height / 2), filled(width - 8, height / 2), filled(width * .75, height - 8)],
@@ -28,6 +28,7 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
     };
   });
   expect(layout.frame).toEqual({ x: 44, y: 20, width: 1166, height: 723 });
+  expect(Math.abs((layout.brand.x - layout.frame.x) - ((layout.frame.x + layout.frame.width) - (layout.github.x + layout.github.width)))).toBeLessThan(1);
   expect(layout.hero.x).toBe(122);
   expect(Math.abs(layout.actions.y - 467)).toBeLessThan(5);
   expect(layout.shell.fill).not.toBe('none');
@@ -74,10 +75,13 @@ test('navigation, history, direct URLs and both hero CTAs', async ({ page }) => 
     await expect(page).toHaveURL(new RegExp(`/${slug}$`));
     await expect(page.getByRole('heading', { name: heading })).toBeVisible();
     await expect(page.getByRole('button', { name: label, exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('.site-frame')).toHaveClass(/content-page/);
+    await expect(page.locator('.section-sidebar')).toBeVisible();
   }
   await page.goBack(); await expect(page.getByRole('heading', { name: 'Ideas, in a few lines.' })).toBeVisible();
   await page.reload(); await expect(page.getByRole('heading', { name: 'Ideas, in a few lines.' })).toBeVisible();
   await page.getByRole('button', { name: 'Home', exact: true }).click();
+  await expect(page.locator('.site-frame')).not.toHaveClass(/content-page/);
   await page.getByRole('button', { name: 'Install qbits', exact: true }).click();
   await expect(page.getByRole('heading', { name: '01 — Install Qbits' })).toBeVisible();
   await page.getByRole('button', { name: 'Home', exact: true }).click();
@@ -98,13 +102,18 @@ test('copy exact install command, copy example, and functional external destinat
   expect(await page.evaluate(() => window.opened)).toEqual({ url: 'https://github.com/shyam3089/qubits', target: '_blank', features: 'noopener,noreferrer' });
   await page.goto('/docs'); await ready(page);
   const block = page.locator('.code-block').first();
-  await block.hover(); await block.getByRole('button', { name: 'Copy code' }).click();
+  const copyButton = block.getByRole('button', { name: 'Copy code' });
+  await expect(copyButton).toBeVisible();
+  await expect(copyButton.locator('.copy-code-icon')).toHaveClass(/fa-copy/);
+  await copyButton.click();
+  await expect(block.getByRole('button', { name: 'Copied!' })).toBeVisible();
+  await expect(block.locator('.copy-code-icon')).toHaveClass(/fa-check/);
   expect(await page.evaluate(() => window.copied)).toContain('npm install qbits');
   await page.getByRole('button', { name: 'View package on npm' }).click();
   expect((await page.evaluate(() => window.opened)).url).toBe('https://www.npmjs.com/package/qbits');
 });
 
-test('loading, page failure and retry remain in the frame', async ({ page }) => {
+test('documentation uses regular page scrolling and linked section navigation', async ({ page }) => {
   let fail = true;
   await page.route('**/api/pages/docs', async route => {
     if (fail) await route.fulfill({ status: 503, json: { detail: 'offline' } }); else await route.continue();
@@ -114,9 +123,25 @@ test('loading, page failure and retry remain in the frame', async ({ page }) => 
   fail = false;
   await page.getByRole('button', { name: 'Try again' }).click();
   await expect(page.getByRole('heading', { name: 'A little code. A good place to start.' })).toBeVisible();
-  const scroll = await page.locator('.inner-view').evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
-  expect(scroll.scrollHeight).toBeGreaterThan(scroll.clientHeight);
-  expect(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight)).toBe(true);
+  const scroll = await page.evaluate(() => ({
+    documentHeight: document.documentElement.scrollHeight,
+    viewportHeight: innerHeight,
+    innerOverflow: getComputedStyle(document.querySelector('.inner-view')).overflowY,
+  }));
+  expect(scroll.documentHeight).toBeGreaterThan(scroll.viewportHeight);
+  expect(scroll.innerOverflow).toBe('visible');
+  const compilerLink = page.getByRole('button', { name: /Connect the compiler/ });
+  await expect(compilerLink).toBeVisible();
+  await compilerLink.click();
+  await expect(page).toHaveURL(/\/docs#vite$/);
+  await expect(page.locator('#vite')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
+  await expect(compilerLink).toHaveAttribute('aria-current', 'location');
+  const stylingLink = page.getByRole('button', { name: /Make it yours/ });
+  await page.locator('#styling').evaluate(section => section.scrollIntoView({ block: 'start' }));
+  await expect(stylingLink).toHaveAttribute('aria-current', 'location');
+  await page.evaluate(() => scrollTo({ top: 0, behavior: 'auto' }));
+  await expect(page.getByRole('button', { name: /Install Qbits/ }).first()).toHaveAttribute('aria-current', 'location');
 });
 
 test('settings failure has a recoverable connection state', async ({ page }) => {

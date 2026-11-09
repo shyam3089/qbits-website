@@ -18,6 +18,7 @@
   --border: #f6edff;
   --border-soft: #ffffff26;
   --surface: #0d0d2b;
+  --code-bg: var(--surface);
   --field-bg: #05061c;
   --success: #a8f0d0;
   --error: #ffacbf;
@@ -36,6 +37,11 @@
   --background-gradient: radial-gradient(ellipse at 55% 45%, #070529 0%, var(--page-bg) 72%);
   --frame-shadow: 0 12px 36px #00000066;
   --button-shadow: inset 0 0 12px #ffffff26;
+  --control-bg: transparent;
+  --control-border: var(--border);
+  --control-shadow: none;
+  --control-hover-border: var(--accent);
+  --control-hover-shadow: var(--control-shadow);
   --field-focus: 0 0 0 3px #bb72ff40;
   --wave-glow: 25;
   --wave-reference-width: 1168;
@@ -108,12 +114,12 @@
   --brand-wordmark-scale: 1;
   --nav-links-left: 345px;
   --nav-links-right: 289px;
-  --nav-font-size: 17px;
+  --nav-font-size: 16px;
   --nav-item-padding-x: 10px;
   --nav-item-padding-y: 13px;
   --nav-underline-height: 3px;
   --nav-underline-gap: 3px;
-  --github-right: 36px;
+  --github-right: 61px;
   --github-top: 32px;
   --github-width: 160px;
   --github-height: 49px;
@@ -142,14 +148,14 @@
   --description-margin-top: 21px;
   --actions-gap: 34px;
   --actions-margin-top: 59px;
-  --button-width: 245px;
-  --button-height: 62px;
+  --button-width: 184px;
+  --button-height: 47px;
   --button-radius: 100px;
   --button-border: 1.6px;
-  --button-font-size: 20px;
+  --button-font-size: 15px;
   --button-font-weight: 500;
-  --button-gap: 15px;
-  --button-icon-size: 28px;
+  --button-gap: 11px;
+  --button-icon-size: 21px;
   --button-hover-offset: -2px;
   --terminal-left: 78px;
   --terminal-bottom: 24px;
@@ -159,8 +165,8 @@
   --terminal-prompt-size: 31px;
   --terminal-divider-height: 30px;
   --terminal-divider-width: 1px;
-  --terminal-cursor-width: 11px;
-  --terminal-cursor-height: 28px;
+  --terminal-cursor-width: 2px;
+  --terminal-cursor-height: 24px;
   --terminal-copy-size: 17px;
   --terminal-copy-gap: 20px;
   --terminal-max-width: 550px;
@@ -247,37 +253,45 @@
 
 :root[data-theme='apple'] {
   color-scheme: light;
-  --page-bg: #e8e8ed;
+  --page-bg: #eef0f5;
   --frame-bg: #ffffff;
   --text: #1d1d1f;
   --muted: #515154;
   --subtle: #6e6e73;
-  --accent: #0071e3;
-  --accent-strong: #0066cc;
-  --blue: #0071e3;
-  --cyan: #64d2ff;
-  --violet: #bf5af2;
+  --accent: #7464d8;
+  --accent-strong: #5d52bd;
+  --blue: #5f7fda;
+  --cyan: #e9a17d;
+  --violet: #8f7ad2;
   --border: #1d1d1f;
-  --border-soft: #0000001f;
+  --border-soft: #0000001a;
   --surface: #f5f5f7;
+  --code-bg: #dfe2ea;
   --field-bg: #ffffff;
   --success: #16803c;
   --error: #d70015;
-  --inset-start: #d8d8dd;
-  --inset-end: #c7c7cc;
-  --inset-line: #b6b6bc;
-  --structure-line: #9f9fa5;
-  --terminal-start: #e5e5ea;
-  --terminal-end: #d8d8dd;
-  --button-start: #0077ed;
-  --button-end: #006edb;
+  --inset-start: #f3dfd4;
+  --inset-end: #dddff1;
+  --inset-line: #bbb8d4;
+  --structure-line: transparent;
+  --structure-stroke: 1px;
+  --terminal-start: #d5d8e2;
+  --terminal-end: #c6cad7;
+  --button-start: #7868d9;
+  --button-end: #537ad3;
   --button-ink: #ffffff;
-  --headline-gradient: linear-gradient(105deg, #0071e3, #5e5ce6);
+  --headline-gradient: linear-gradient(105deg, #e98569, #806bd1);
   --button-gradient: linear-gradient(110deg, var(--button-start), var(--button-end));
-  --background-gradient: linear-gradient(180deg, #f5f5f7 0%, var(--page-bg) 100%);
-  --frame-shadow: 0 18px 50px #0000002b;
-  --button-shadow: inset 0 1px 0 #ffffff40;
-  --field-focus: 0 0 0 3px #0071e333;
+  --background-gradient: linear-gradient(145deg, #fafafa 0%, var(--page-bg) 58%, #e8eaf4 100%);
+  --frame-shadow: 0 18px 50px #4c527026;
+  --button-shadow: 0 8px 16px #5f66bf45;
+  --control-bg: #ffffffd9;
+  --control-border: #d1d1d6;
+  --control-shadow: 0 1px 2px #0000000d, 0 8px 18px #4c527020;
+  --control-hover-border: #aaa8c7;
+  --control-hover-shadow: 0 2px 4px #00000012, 0 8px 22px #4c52701a;
+  --button-border: 1px;
+  --field-focus: 0 0 0 3px #7464d833;
   --wave-halo-opacity: 0.05;
   --wave-opacity: 0.34;
   --wave-band-opacity: 0.16;
@@ -294,12 +308,12 @@
   :root { --brand-wordmark-scale: 0.72; }
 }
 @media (--tablet) {
-  :root { --page-gutter: 24px; --page-top: 20px; --page-bottom: 24px; --frame-min-height: 670px; --nav-padding-x: 34px; --brand-font-size: 35px; --brand-symbol-width: 40px; --brand-symbol-height: 47px; --nav-links-left: 220px; --nav-links-right: 205px; --nav-font-size: 16px; --nav-item-padding-x: 6px; --github-right: 27px; --github-width: 135px; --github-font-size: 16px; --hero-left: 49px; --hero-top: 170px; --headline-size: 43px; --headline-max-width: 720px; --description-size: 20px; --terminal-left: 49px; --content-left: 49px; --content-right: 49px; --content-title-size: 34px; }
+  :root { --page-gutter: 24px; --page-top: 20px; --page-bottom: 24px; --frame-min-height: 670px; --nav-padding-x: 34px; --brand-font-size: 35px; --brand-symbol-width: 40px; --brand-symbol-height: 47px; --nav-links-left: 220px; --nav-links-right: 205px; --nav-font-size: 16px; --nav-item-padding-x: 6px; --github-right: 34px; --github-width: 135px; --github-font-size: 16px; --hero-left: 49px; --hero-top: 170px; --headline-size: 43px; --headline-max-width: 720px; --description-size: 20px; --terminal-left: 49px; --content-left: 49px; --content-right: 49px; --content-title-size: 34px; }
 }
 
 @media (--mobile) {
   :root { --frame-inset: 0px; --github-inset-width: 185px; --github-inset-depth: 79px; --github-curve-width: 75px; --brand-offset-y: 0px; }
-  :root { --page-gutter: 12px; --page-top: 12px; --page-bottom: 12px; --frame-radius: 28px; --frame-min-height: 650px; --frame-stroke: 4px; --nav-height: 130px; --nav-padding-x: 24px; --brand-font-size: 30px; --brand-symbol-width: 34px; --brand-symbol-height: 39px; --brand-gap: 8px; --nav-links-left: 17px; --nav-links-right: 17px; --nav-font-size: 14px; --nav-item-padding-x: 7px; --github-right: 20px; --github-top: 24px; --github-width: 115px; --github-height: 40px; --github-font-size: 14px; --github-icon-size: 22px; --github-gap: 8px; --hero-left: 28px; --hero-top: 164px; --hero-right: 24px; --hero-logo-width: 37px; --hero-logo-height: 43px; --hero-eyebrow-gap: 12px; --eyebrow-size: 12px; --eyebrow-line-width: 25px; --eyebrow-line-gap: 0px; --headline-size: 38px; --headline-margin-top: 25px; --headline-leading: 1.15; --description-size: 17px; --description-leading: 1.55; --description-margin-top: 23px; --actions-gap: 13px; --actions-margin-top: 34px; --button-width: 100%; --button-height: 51px; --button-font-size: 17px; --button-icon-size: 24px; --button-gap: 10px; --terminal-left: 28px; --terminal-bottom: 22px; --terminal-font-size: 17px; --terminal-gap: 13px; --terminal-prompt-size: 24px; --terminal-divider-height: 25px; --terminal-cursor-width: 8px; --terminal-cursor-height: 22px; --terminal-copy-gap: 8px; --terminal-copy-size: 15px; --content-left: 28px; --content-right: 24px; --content-top: 155px; --content-bottom: 100px; --content-title-size: 30px; --content-body-size: 16px; --content-intro-size: 16px; --content-section-title-size: 21px; --admin-grid-gap: 17px; --code-padding: 14px; --code-size: 12px; --notice-top: 130px; --notice-right: 24px; --status-font-size: 12px; }
+  :root { --page-gutter: 12px; --page-top: 12px; --page-bottom: 12px; --frame-radius: 28px; --frame-min-height: 650px; --frame-stroke: 4px; --nav-height: 130px; --nav-padding-x: 24px; --brand-font-size: 30px; --brand-symbol-width: 34px; --brand-symbol-height: 39px; --brand-gap: 8px; --nav-links-left: 17px; --nav-links-right: 17px; --nav-font-size: 14px; --nav-item-padding-x: 7px; --github-right: 24px; --github-top: 24px; --github-width: 115px; --github-height: 40px; --github-font-size: 14px; --github-icon-size: 22px; --github-gap: 8px; --hero-left: 28px; --hero-top: 164px; --hero-right: 24px; --hero-logo-width: 37px; --hero-logo-height: 43px; --hero-eyebrow-gap: 12px; --eyebrow-size: 12px; --eyebrow-line-width: 25px; --eyebrow-line-gap: 0px; --headline-size: 38px; --headline-margin-top: 25px; --headline-leading: 1.15; --description-size: 17px; --description-leading: 1.55; --description-margin-top: 23px; --actions-gap: 13px; --actions-margin-top: 34px; --button-width: 75%; --button-height: 38px; --button-font-size: 13px; --button-icon-size: 18px; --button-gap: 7.5px; --terminal-left: 28px; --terminal-bottom: 22px; --terminal-font-size: 17px; --terminal-gap: 13px; --terminal-prompt-size: 24px; --terminal-divider-height: 25px; --terminal-cursor-width: 2px; --terminal-cursor-height: 20px; --terminal-copy-gap: 8px; --terminal-copy-size: 15px; --content-left: 28px; --content-right: 24px; --content-top: 155px; --content-bottom: 100px; --content-title-size: 30px; --content-body-size: 16px; --content-intro-size: 16px; --content-section-title-size: 21px; --admin-grid-gap: 17px; --code-padding: 14px; --code-size: 12px; --notice-top: 130px; --notice-right: 24px; --status-font-size: 12px; }
 }
 
 @media (--compact) {

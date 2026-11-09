@@ -20,7 +20,7 @@ Compared Firefox screenshots with `Neon Qbits Hero with Curved Command Bar.png` 
 - Hero left edge: x = 122. CTAs: approximately y = 465, width = 245, height = 62 CSS pixels.
 - GitHub inset and the terminal's curved upper boundary are independent vector paths, configured through CSS tokens.
 - The navbar uses the supplied main logo's original wordmark as a mask for white text, and the supplied symbol retains its original colours. The standalone hero symbol also uses the supplied asset.
-- Tablet: **820 × 1180**. Mobile: **390 × 844** and **320 × 568**. No horizontal or vertical document overflow. Small-screen hero content and long documentation/settings views scroll inside the frame.
+- Tablet: **820 × 1180**. Mobile: **390 × 844** and **320 × 568**. The home page has no document overflow; maintained content pages use regular page scrolling with responsive section navigation, while settings scroll inside the frame.
 - Animated particles are a procedural recreation, not an exact copy of the reference's individual particles. The supplied original orange/magenta logo differs intentionally from the symbol illustrated in the approved screenshot.
 
 Saved screenshots:
@@ -35,7 +35,7 @@ Saved screenshots:
 
 All five public navigation views, browser history, production deep links, installation/documentation CTAs, configured GitHub/npm destinations, exact command copying, code copying, keyboard navigation, skip control and focus states.
 
-API loading failures and retries remain within the frame. Long pages use an internal scroll surface. Reduced motion produces a static particle canvas and disables the terminal cursor animation; the canvas changes when motion is allowed. Clipboard feedback was tested both with a controlled clipboard to assert exact text and with a real Firefox clipboard write.
+API loading failures and retries remain within the site layout. Maintained content pages use regular page scrolling; settings use an internal scroll surface. Reduced motion produces a static particle canvas and disables the terminal cursor animation; the canvas changes when motion is allowed. Clipboard feedback was tested both with a controlled clipboard to assert exact text and with a real Firefox clipboard write.
 
 Admin checks cover incorrect and correct passwords, session restoration, validated GitHub/npm URL edits, theme selection, token overrides, preview, persistent save, reload and logout. API checks separately verify CSRF/origin protection, rate limiting, validation rejection without mutation, and settings persistence across backend app restarts.
 

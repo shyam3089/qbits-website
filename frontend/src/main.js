@@ -2,6 +2,7 @@ import '@fontsource/poppins/latin-300.css';
 import '@fontsource/poppins/latin-400.css';
 import '@fontsource/poppins/latin-500.css';
 import '@fontsource/poppins/latin-600.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import './styles.css';
 import rawTokens from './themes/tokens.css?raw';
 import App from './App.qb';
@@ -19,10 +20,12 @@ const frame = root.querySelector('.site-frame');
 const frameArt = mountFrameArt(root.querySelector('.frame-art'));
 const quantum = mountQuantum(root.querySelector('.quantum-background'));
 const routeNames = new Set(['home', 'features', 'docs', 'examples', 'roadmap', 'admin']);
+const contentPageNames = new Set(['features', 'docs', 'examples', 'roadmap']);
 const themeNames = ['neon', 'ultraviolet', 'midnight', 'apple'];
 let config = null, pageView = null, adminView = null, csrf = '', pageRequest = null;
 let activePage = 'home', requestVersion = 0, feedbackTimer, adminVersion = 0;
 let selectedTheme = 'apple', appliedKeys = [], previewing = false;
+let sectionScrollCleanup = null;
 
 const tokenNames = [...rawTokens.split(":root[data-theme=")[0].matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)]
   .filter(([, key, value]) => !value.includes('url(') && !key.startsWith('--icon-') && !key.startsWith('--breakpoint-'))
@@ -55,7 +58,7 @@ function accessibility() {
   attrs(root.querySelector('.terminal-command'), { 'aria-label': 'Copy install command' });
   attrs(root.querySelector('.github-button'), { role: 'link', 'aria-label': 'Qbits on GitHub (opens a new tab)' });
   attrs(root.querySelector('.hero-symbol'), { role: 'img', 'aria-label': 'Qbits symbol' });
-  for (const icon of root.querySelectorAll('.brand-symbol, .button-icon, .github-icon, .terminal-copy-icon, .terminal-prompt, .terminal-divider, .terminal-cursor, .eyebrow-line')) attrs(icon, { 'aria-hidden': 'true' });
+  for (const icon of root.querySelectorAll('.brand-symbol, .button-icon, .github-icon, .terminal-copy-icon, .terminal-prompt, .copy-code-icon, .external-icon, .terminal-divider, .terminal-cursor, .eyebrow-line')) attrs(icon, { 'aria-hidden': 'true' });
   for (const page of routeNames) for (const item of root.querySelectorAll(`.nav-item.nav-${page}`)) {
     if (page === activePage) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
   }
@@ -70,7 +73,53 @@ function accessibility() {
   for (const input of root.querySelectorAll('.token-input')) attrs(input, { name: input.closest('label').querySelector('span').textContent, autocomplete: 'off', spellcheck: 'false' });
   for (const theme of themeNames) attrs(root.querySelector(`.theme-${theme}`), { 'aria-pressed': String(theme === selectedTheme) });
   attrs(root.querySelector('.inner-view'), { tabindex: '0', 'aria-label': `${activePage} content` });
+  attrs(root.querySelector('.section-sidebar'), { role: 'navigation', 'aria-label': 'Page sections' });
   for (const code of root.querySelectorAll('.code-block p')) attrs(code, { role: 'code' });
+}
+
+function wireSectionNavigation(sections) {
+  const links = [...root.querySelectorAll('.section-link')];
+  const contentSections = [...root.querySelectorAll('.content-section')];
+  sections.forEach((section, index) => {
+    attrs(contentSections[index], { id: section.id });
+    attrs(links[index], { 'aria-controls': section.id });
+  });
+  const setActive = index => {
+    links.forEach((link, linkIndex) => {
+      if (linkIndex === index) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+  let frame = 0;
+  const updateActive = () => {
+    frame = 0;
+    const headerOffset = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) + 32;
+    let active = 0;
+    contentSections.forEach((section, index) => {
+      if (section.getBoundingClientRect().top <= headerOffset) active = index;
+    });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) active = contentSections.length - 1;
+    setActive(active);
+  };
+  const scheduleUpdate = () => {
+    if (!frame) frame = requestAnimationFrame(updateActive);
+  };
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', scheduleUpdate);
+  sectionScrollCleanup = () => {
+    window.removeEventListener('scroll', scheduleUpdate);
+    window.removeEventListener('resize', scheduleUpdate);
+    cancelAnimationFrame(frame);
+  };
+  const hash = decodeURIComponent(window.location.hash.slice(1));
+  const linked = sections.findIndex(section => section.id === hash);
+  if (linked >= 0) {
+    setActive(linked);
+    requestAnimationFrame(() => contentSections[linked]?.scrollIntoView({ block: 'start' }));
+  } else {
+    scheduleUpdate();
+  }
+  accessibility();
 }
 
 const observer = new MutationObserver(accessibility);
@@ -141,6 +190,8 @@ function pathPage() {
 
 async function route(page, push = false, focus = false) {
   const version = ++requestVersion;
+  if (contentPageNames.has(page) || contentPageNames.has(activePage)) window.scrollTo({ top: 0, behavior: 'auto' });
+  sectionScrollCleanup?.(); sectionScrollCleanup = null;
   pageRequest?.abort();
   pageView?.(); pageView = null;
   adminView?.(); adminView = null;
@@ -153,6 +204,7 @@ async function route(page, push = false, focus = false) {
   }
   app.updateState({ page });
   frame.dataset.page = page;
+  frame.classList.toggle('content-page', contentPageNames.has(page));
   updateTitle(); accessibility();
   if (focus) root.querySelector('.view-container').focus({ preventScroll: true });
   if (page === 'home') return;
@@ -168,7 +220,8 @@ async function route(page, push = false, focus = false) {
   try {
     const result = await api(`/pages/${page}`, { signal: pageRequest.signal });
     if (version !== requestVersion) return;
-    pageView.updateState({ title: result.title, intro: result.intro, sections: result.sections, loading: false, error: '' });
+    pageView.updateState({ title: result.title, intro: result.intro, sections: result.sections, navigation: contentPageNames.has(page), loading: false, error: '' });
+    if (contentPageNames.has(page)) wireSectionNavigation(result.sections);
   } catch (error) {
     if (version !== requestVersion || error.name === 'AbortError') return;
     pageView.updateState({ loading: false, error: 'We could not load this page. Check your connection and try again.' });
@@ -251,7 +304,19 @@ async function copy(text, button) {
       selection.removeAllRanges(); if (previous) selection.addRange(previous);
       if (!succeeded) throw new Error('Clipboard unavailable');
     }
-    if (button.matches('.copy-code')) { button.textContent = 'Copied!'; setTimeout(() => { if (button.isConnected) button.textContent = 'Copy code'; }, 2000); }
+    if (button.matches('.copy-code')) {
+      const label = button.querySelector('.copy-code-label');
+      const icon = button.querySelector('.copy-code-icon');
+      label.textContent = 'Copied!';
+      icon.classList.replace('fa-regular', 'fa-solid');
+      icon.classList.replace('fa-copy', 'fa-check');
+      setTimeout(() => {
+        if (!button.isConnected) return;
+        label.textContent = 'Copy code';
+        icon.classList.replace('fa-solid', 'fa-regular');
+        icon.classList.replace('fa-check', 'fa-copy');
+      }, 2000);
+    }
     else { app.updateState({ feedback: 'Copied!' }); clearTimeout(feedbackTimer); feedbackTimer = setTimeout(() => app.updateState({ feedback: '' }), 2500); }
   } catch {
     app.updateState({ feedback: 'Select the command and copy it manually.' });
@@ -269,6 +334,17 @@ root.addEventListener('click', event => {
   const navigation = [...routeNames].find(page => button.classList.contains(`nav-${page}`));
   if (navigation) { void route(navigation, true, true); return; }
   if (button.matches('.skip-content')) { root.querySelector('.view-container').focus(); return; }
+  if (button.matches('.section-link')) {
+    const links = [...root.querySelectorAll('.section-link')];
+    const index = links.indexOf(button);
+    const section = root.querySelectorAll('.content-section')[index];
+    if (!section?.id) return;
+    for (const link of links) link.removeAttribute('aria-current');
+    attrs(button, { 'aria-current': 'location' });
+    history.replaceState(history.state, '', `${window.location.pathname}#${encodeURIComponent(section.id)}`);
+    section.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    return;
+  }
   if (button.matches('.button-docs')) { void route('docs', true, true); return; }
   if (button.matches('.button-install')) { void route('docs', true, true); return; }
   if (button.matches('.github-button')) { external(config?.github_url); return; }
@@ -321,7 +397,7 @@ root.addEventListener('keydown', event => {
   if (event.key === 'Enter' && event.target.matches('.password-input')) { event.preventDefault(); root.querySelector('.admin-login')?.click(); }
 });
 window.addEventListener('popstate', () => { void route(pathPage(), false, true); });
-window.addEventListener('pagehide', () => { pageRequest?.abort(); clearTimeout(feedbackTimer); observer.disconnect(); quantum.dispose(); frameArt.dispose(); pageView?.(); adminView?.(); app(); }, { once: true });
+window.addEventListener('pagehide', () => { pageRequest?.abort(); sectionScrollCleanup?.(); clearTimeout(feedbackTimer); observer.disconnect(); quantum.dispose(); frameArt.dispose(); pageView?.(); adminView?.(); app(); }, { once: true });
 accessibility();
 void route(pathPage());
 void loadSite();
