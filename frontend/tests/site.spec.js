@@ -84,6 +84,34 @@ test('hero headline stays on one line and auto-fits after viewport changes', asy
   }
 });
 
+test('hero logo wobbles toward the cursor and resets when it leaves', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/'); await ready(page);
+  const logo = page.locator('.hero-art-logo');
+  const bounds = await logo.boundingBox();
+  await page.mouse.move(bounds.x + bounds.width * .2, bounds.y + bounds.height * .25);
+  const firstTilt = await logo.evaluate(element => ({
+    x: element.style.getPropertyValue('--hero-logo-tilt-x'),
+    y: element.style.getPropertyValue('--hero-logo-tilt-y'),
+    transform: getComputedStyle(element).transform,
+    transition: getComputedStyle(element).transitionDuration,
+  }));
+  expect(Number.parseFloat(firstTilt.x)).toBeGreaterThan(0);
+  expect(Number.parseFloat(firstTilt.y)).toBeLessThan(0);
+  expect(firstTilt.transform).toContain('matrix3d');
+  expect(firstTilt.transition).toContain('0.76s');
+  await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .75);
+  const secondTilt = await logo.evaluate(element => ({
+    x: element.style.getPropertyValue('--hero-logo-tilt-x'),
+    y: element.style.getPropertyValue('--hero-logo-tilt-y'),
+  }));
+  expect(Number.parseFloat(secondTilt.x)).toBeLessThan(0);
+  expect(Number.parseFloat(secondTilt.y)).toBeGreaterThan(0);
+  await page.mouse.move(0, 0);
+  await expect.poll(() => logo.evaluate(element => element.style.getPropertyValue('--hero-logo-tilt-x'))).toBe('0deg');
+  await expect.poll(() => logo.evaluate(element => element.style.getPropertyValue('--hero-logo-tilt-y'))).toBe('0deg');
+});
+
 test('CTA waves follow the pointer and burst on click', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);

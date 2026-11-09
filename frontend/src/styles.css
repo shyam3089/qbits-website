@@ -323,6 +323,9 @@ p, h1, h2, h3 {
   width: clamp(220px, 25vw, 310px);
   aspect-ratio: 150.58 / 169.29;
   background: url('./assets/hero-logo.svg') center / contain no-repeat;
+  transform: perspective(1200px) rotateX(var(--hero-logo-tilt-x, 0deg)) rotateY(var(--hero-logo-tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 760ms cubic-bezier(.2, 1.35, .35, 1);
 }
 
 .hero-features {
