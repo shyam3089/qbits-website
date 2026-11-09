@@ -1,4 +1,4 @@
-// Transparent, theme-aware ribbons generated directly in the browser.
+// Flowing translucent ribbon meshes generated directly in the browser.
 // Qbits owns the container; this adapter owns only the decorative canvas.
 export function mountBanner(target) {
   const canvas = document.createElement('canvas');
@@ -13,65 +13,53 @@ export function mountBanner(target) {
 
   function draw(time = 0) {
     ctx.clearRect(0, 0, width, height);
-    const phase = time / 6800;
-    const scale = Math.min(width / 1200, height / 720);
-    // Diffuse color washes keep the artwork airy on the white surface.
-    palette.forEach((color, index) => {
-      const x = width * (.76 + index * .1);
-      const y = height * (.4 + index * .16) + Math.sin(phase + index) * 16 * scale;
-      const radius = Math.max(width * .22, height * .28);
-      const glow = ctx.createRadialGradient(x, y, 0, x, y, radius);
-      glow.addColorStop(0, color + '38');
-      glow.addColorStop(1, color + '00');
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, width, height);
-    });
-    for (let ribbon = 0; ribbon < 3; ribbon++) {
-      const color = palette[ribbon];
-      const gradient = ctx.createLinearGradient(width * .32, 0, width, 0);
-      gradient.addColorStop(0, color + '00');
-      gradient.addColorStop(.35, color + '99');
-      gradient.addColorStop(.75, color + 'ee');
-      gradient.addColorStop(1, color + '88');
+    const phase = time / 1800;
+    const slope = Math.tan(25 * Math.PI / 180);
+    const spread = Math.max(28, Math.min(width, height) * .13);
+    ctx.lineWidth = Math.max(.55, Math.min(width / 1200, 1) * .85);
+
+    // Fine curved filaments expand and pinch into translucent, crossing ribbons.
+    function point(t, offset, ribbon) {
+      const x = t * width;
+      const layer = ribbon % 3;
+      const lower = ribbon >= 3;
+      const envelope = lower ? .7 + t * .3 : .65 + .35 * Math.pow(Math.sin(t * Math.PI + layer * .5), 2);
+      const originSpread = 1 + .65 * (1 - t);
+      const twist = lower ? .85 + .15 * Math.cos(phase * .5 + t * 2) : Math.cos(t * Math.PI * 1.8 + phase * .5 + layer * .8);
+      // Lower ribbons fan away from the main diagonal into the bottom-right corner.
+      const drop = lower ? height * .28 * (ribbon - 2) * Math.pow(t, 1.5) : 0;
+      // Restore the lower-left origin and upward-right diagonal.
+      const y = height * (.73 + layer * .035) - (x - width * .55) * slope
+        + height * .4 - 100
+        + Math.sin(t * Math.PI * 2.1 + phase + layer * 1.6) * height * .07
+        + drop
+        + offset * spread * originSpread * envelope * twist;
+      return [x, y];
+    }
+    for (let ribbon = 0; ribbon < 5; ribbon++) {
+      // Alternate the gradient so purple and orange both reach the visible right edge.
+      const colors = ribbon % 2 === 0 ? palette : [...palette].reverse();
+      const gradient = ctx.createLinearGradient(width * .25, 0, width, 0);
+      gradient.addColorStop(0, 'transparent');
+      colors.forEach((color, index) => gradient.addColorStop(.15 + .85 * index / (colors.length - 1), color));
       ctx.strokeStyle = gradient;
-      ctx.lineWidth = Math.max(.9, scale * 1.8);
-      for (let strand = 0; strand < 23; strand++) {
+      ctx.fillStyle = gradient;
+      ctx.globalAlpha = .055;
+      ctx.beginPath();
+      for (let step = 0; step <= 100; step++) {
+        const [x, y] = point(step / 100, -1, ribbon);
+        if (!step) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      for (let step = 100; step >= 0; step--) ctx.lineTo(...point(step / 100, 1, ribbon));
+      ctx.closePath(); ctx.fill();
+      for (let strand = 0; strand < 42; strand++) {
+        const offset = strand / 41 * 2 - 1;
+        ctx.globalAlpha = .23 + .24 * Math.pow(Math.abs(offset), 3);
         ctx.beginPath();
         for (let step = 0; step <= 100; step++) {
-          const t = step / 100;
-          const x = width * (.28 + t * .82);
-          const envelope = Math.sin(t * Math.PI * .85);
-          const wave = Math.sin(t * Math.PI * 2.7 + phase + ribbon * 1.5);
-          const y = height * (.66 + ribbon * .055)
-            + wave * height * .14 * envelope
-            + (strand - 11) * 5 * scale * envelope
-            + Math.cos(t * 4 + phase * .7 + ribbon) * height * .035;
+          const [x, y] = point(step / 100, offset, ribbon);
           if (!step) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
-        ctx.stroke();
-      }
-    }
-    drawParticles(phase, scale);
-  }
-  function drawParticles(phase, scale) {
-    // Fixed seeds keep the particle field consistent between frames.
-    for (let particle = 0; particle < 84; particle++) {
-      const seed = Math.sin(particle * 127.1 + 17) * 43758.5453;
-      const fraction = seed - Math.floor(seed);
-      const x = width * (.4 + fraction * .63) + Math.sin(phase * .4 + particle) * 7 * scale;
-      const y = height * (.18 + ((particle * .618034) % 1) * .72)
-        + Math.cos(phase * .6 + particle * .7) * 11 * scale;
-      const color = palette[particle % 3];
-      const dot = Math.max(.65, (particle % 7 === 0 ? 2.1 : 1) * scale);
-      ctx.globalAlpha = .35 + .5 * (.5 + .5 * Math.sin(phase * 1.6 + particle));
-      ctx.fillStyle = color;
-      ctx.beginPath(); ctx.arc(x, y, dot, 0, Math.PI * 2); ctx.fill();
-      if (particle % 9 === 0) {
-        ctx.strokeStyle = color + '80';
-        ctx.lineWidth = .7;
-        ctx.beginPath();
-        ctx.moveTo(x - dot * 3, y); ctx.lineTo(x + dot * 3, y);
-        ctx.moveTo(x, y - dot * 3); ctx.lineTo(x, y + dot * 3);
         ctx.stroke();
       }
     }
@@ -97,7 +85,7 @@ export function mountBanner(target) {
     canvas.height = Math.round(height * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     const css = getComputedStyle(document.documentElement);
-    palette = ['--banner-lavender', '--banner-blue', '--banner-pink']
+    palette = ['--banner-purple', '--banner-magenta', '--banner-pink', '--banner-coral', '--banner-orange']
       .map(key => css.getPropertyValue(key).trim());
     draw(0); resume();
   }

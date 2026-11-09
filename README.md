@@ -59,7 +59,7 @@ Open **http://127.0.0.1:8108**. FastAPI serves the built frontend, hashed assets
 - The same `tokens.css` owns breakpoint values and artwork geometry. Vite expands the named media conditions from its `--breakpoint-*` tokens because CSS custom properties cannot be used directly in media query conditions. Breakpoint changes require rebuilding; other tokens can be managed in admin.
 - `frontend/src/styles.css`: component styles consuming the theme tokens.
 - `frontend/src/platform/visuals.js`: decorative SVG frame geometry.
-- `frontend/src/platform/banner.js`: a transparent quantum field with lavender, blue and pink wave bundles and drifting particles. It pauses off the home page and in hidden tabs, and renders a still composition for reduced motion. Colors, opacity and the readability gradient are controlled by the `--banner-*` tokens in `tokens.css`.
+- `frontend/src/platform/banner.js`: flowing translucent ribbon meshes blending purple, magenta, pink, coral and orange, with a wide lower-left origin rising toward the right at 25 degrees. It pauses off the home page and in hidden tabs, and renders a still composition for reduced motion. Colors, opacity and the readability gradient are controlled by the `--banner-*` tokens in `tokens.css`.
 - `frontend/src/main.js`: browser API adapter, API loading, history, clipboard, external destinations and accessibility attributes.
 - `frontend/src/assets/`: supplied original logo files, optimised logo symbol and local icons. Poppins is bundled locally through `@fontsource/poppins`; no third-party font request.
 - `backend/content/site.json`: validated default site settings.
@@ -108,4 +108,4 @@ All application views and controls are `.qb` components, including admin inputs 
 
 The adapter uses the documented experimental mount-handle `updateState` method to feed API data into Qbits. The dependency is pinned because that host interface is experimental. Qbits routing is also experimental; this site uses a small History API adapter instead. SSR, nested routing and route guards are not invented or required here.
 
-The supplied original symbol is retained, including its orange-to-magenta branding. The home banner generates transparent pastel ribbons over the current theme surface, with no video background or media download.
+The supplied original symbol is retained, including its orange-to-magenta branding. The home banner generates layered pastel shapes over the current theme surface, with no video background or media download.
