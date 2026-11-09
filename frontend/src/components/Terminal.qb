@@ -1,7 +1,7 @@
 component Terminal(prefix = "npm", remainder = " install qbits", feedback = ""):
     div class="terminal":
         button class="terminal-command":
-            span class="fa-solid fa-angle-right terminal-prompt"
+            span class="terminal-prompt" text=">"
             span class="terminal-divider"
             span class="command-text":
                 span class="command-prefix" text=prefix

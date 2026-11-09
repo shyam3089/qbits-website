@@ -1,0 +1,6 @@
+import Panel from "./Panel.qb"
+import Counter from "./Counter.qb"
+
+component Composition:
+    Panel title="A counter inside a panel":
+        Counter

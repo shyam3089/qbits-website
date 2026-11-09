@@ -54,11 +54,12 @@ Open **http://127.0.0.1:8108**. FastAPI serves the built frontend, hashed assets
 
 ## Structure and content
 
-- `frontend/src/components/`: Qbits frame, navigation, hero, buttons, terminal, particle surface, content and admin components.
+- `frontend/src/components/`: Qbits frame, navigation, hero, buttons, terminal, banner container, content and admin components.
 - `frontend/src/themes/tokens.css`: colours, gradients, fonts, dimensions, corner curves, responsive overrides, shadows and motion tokens; four theme variants.
 - The same `tokens.css` owns breakpoint values and artwork geometry. Vite expands the named media conditions from its `--breakpoint-*` tokens because CSS custom properties cannot be used directly in media query conditions. Breakpoint changes require rebuilding; other tokens can be managed in admin.
 - `frontend/src/styles.css`: component styles consuming the theme tokens.
-- `frontend/src/platform/visuals.js`: decorative SVG frame and cached canvas particle field. The animation reuses a bitmap, caps pixel ratio and frame rate, pauses in hidden tabs and honours reduced motion.
+- `frontend/src/platform/visuals.js`: decorative SVG frame geometry.
+- `frontend/src/platform/banner.js`: decorative home banner video, with silent looping playback, a still poster for reduced motion and loading, and playback paused off the home page or in hidden tabs. The supplied clip, a WebM version and its poster are bundled in `frontend/public/media/`. Banner opacity and the readability gradient are controlled by `--banner-opacity` and `--banner-overlay` in `tokens.css`.
 - `frontend/src/main.js`: browser API adapter, API loading, history, clipboard, external destinations and accessibility attributes.
 - `frontend/src/assets/`: supplied original logo files, optimised logo symbol and local icons. Poppins is bundled locally through `@fontsource/poppins`; no third-party font request.
 - `backend/content/site.json`: validated default site settings.
@@ -82,6 +83,8 @@ Public API:
 
 Install opens the installation documentation. Documentation opens the Docs view. The entire terminal command is a copy control; code samples also have copy buttons. GitHub and npm controls open the configured HTTPS destinations in another tab. Browser Back/Forward and direct page URLs work.
 
+Documentation and Features include code explanations and live compiled Qbits counter, input-binding and composition demos. The demo components live in `frontend/src/components/demos/`. Maintained page sections can set `language`, `explanation` and `demo` (counter, greeting or composition). Source coloring uses a small text-only lexer in `frontend/src/platform/code.js`, with theme colors in `tokens.css`; copying preserves the original source. The demos run fixed components rather than evaluating edited source, and each mount starts with fresh state.
+
 ## Verification
 
 ```powershell
@@ -101,8 +104,8 @@ With the development servers running, `npm run capture` records desktop, tablet 
 
 Installed documentation was inspected before implementation: `node_modules/qbits/docs/syntax.md`, `api.md`, and `limitations.md`. The frontend uses the published **`npm install qbits`** package, pinned to 1.0.1. No scaffold generator or framework-core changes.
 
-All application views and controls are `.qb` components, including admin inputs and keyed content lists. This Qbits version does not support arbitrary HTML tags/attributes, async expressions, network requests, canvas, or clipboard operations inside `.qb`. A small JavaScript host adapter supplies these browser functions and adds semantic roles/attributes to Qbits-owned elements. The decorative canvas and SVG are browser surfaces, not a second UI framework.
+All application views and controls are `.qb` components, including admin inputs and keyed content lists. This Qbits version does not support arbitrary HTML tags/attributes, async expressions, network requests, video, or clipboard operations inside `.qb`. A small JavaScript host adapter supplies these browser functions and adds semantic roles/attributes to Qbits-owned elements. The decorative video and SVG are browser surfaces, not a second UI framework.
 
 The adapter uses the documented experimental mount-handle `updateState` method to feed API data into Qbits. The dependency is pinned because that host interface is experimental. Qbits routing is also experimental; this site uses a small History API adapter instead. SSR, nested routing and route guards are not invented or required here.
 
-The supplied original symbol is retained, including its orange-to-magenta branding. The animated quantum field is a procedural recreation of the reference artwork, so its individual particles are not pixel-identical to the screenshot.
+The supplied original symbol is retained, including its orange-to-magenta branding. The home banner uses the supplied quantum loop video with a theme-aware overlay to keep text readable.

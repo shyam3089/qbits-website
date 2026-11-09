@@ -1,0 +1,4 @@
+component Panel(title = ""):
+    section class="demo-panel":
+        h3 text=title
+        slot

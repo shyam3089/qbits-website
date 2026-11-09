@@ -3,9 +3,36 @@
   "title": "Small syntax. Real possibilities.",
   "intro": "A focused language for building reactive interfaces, with less between you and your idea.",
   "sections": [
-    {"id": "syntax", "title": "Familiar from the first line", "body": "Indentation defines your interface. Typed state and simple expressions keep the relationship between your data and your UI clear.", "code": "component Counter:\n    count = 0\n    button text=\"Count: \" + str(count):\n        on click:\n            count = count + 1"},
-    {"id": "reactivity", "title": "Reactive by design", "body": "Updates follow their dependencies. Qbits preserves input focus, selection and keyed element identity, and rolls back failed structural preparation.", "code": ""},
-    {"id": "components", "title": "Compose your interface", "body": "Build small .qb components with typed props, an unnamed slot and typed child events. Import ordinary CSS and use the Vite integration for development.", "code": "import Panel from \"./Panel.qb\"\n\ncomponent App:\n    Panel title=\"Hello, Qbits\":\n        p text=\"Make something great.\""},
-    {"id": "honest", "title": "A deliberately focused foundation", "body": "Qbits 1.0.1 supports typed state, classes, lists, lifecycle hooks and shared state. Browser APIs use a trusted JavaScript adapter. Routing is experimental; server rendering and nested routing are not supported.", "code": ""}
+    {
+      "id": "syntax",
+      "title": "Familiar from the first line",
+      "body": "Indentation defines your interface. Typed state and simple expressions keep the relationship between your data and your UI clear.",
+      "code": "component Counter:\n    count = 0\n    div class=\"demo-counter\":\n        button class=\"small-button primary\" text=\"Count: \" + str(count):\n            on click:\n                count = count + 1",
+      "demo": "counter",
+      "explanation": "component Counter names a reusable interface. count = 0 declares numeric state owned by this instance. The div groups the interface and its class connects it to CSS. The button combines a string with str(count), which converts the number to text. The indented on click handler adds one to count; Qbits updates the label automatically."
+    },
+    {
+      "id": "reactivity",
+      "title": "Reactive by design",
+      "body": "Updates follow their dependencies. Qbits preserves input focus, selection and keyed element identity, and rolls back failed structural preparation.",
+      "code": "component Greeting:\n    name = \"\"\n    div class=\"demo-greeting\":\n        label text=\"Your name\":\n            input class=\"demo-name\":\n                value=name\n                on input:\n                    name = event.value\n        if name == \"\":\n            p text=\"Enter your name\"\n        else:\n            p text=\"Hello, \" + name",
+      "demo": "greeting",
+      "explanation": "name starts as an empty string. The label wraps the input so it has an accessible name. value=name binds the field to state, and on input copies event.value back into name. The if branch shows a prompt while the string is empty; otherwise, the text binding greets you. Type and edit in the same input to observe that focus stays in place."
+    },
+    {
+      "id": "components",
+      "title": "Compose your interface",
+      "body": "Build small .qb components with typed props, an unnamed slot and typed child events. Import ordinary CSS and use the Vite integration for development.",
+      "code": "component Panel(title = \"\"):\n    section class=\"demo-panel\":\n        h3 text=title\n        slot\n\n# Composition.qb (a separate file)\nimport Panel from \"./Panel.qb\"\nimport Counter from \"./Counter.qb\"\n\ncomponent Composition:\n    Panel title=\"A counter inside a panel\":\n        Counter",
+      "demo": "composition",
+      "explanation": "Save the first component as Panel.qb. Its title prop has a string default, and slot marks where child content appears. In Composition.qb, import Panel and Counter from their files. Panel receives a title, while the indented Counter is rendered at the slot. That child keeps its own count state. Use the Counter.qb source from the first example."
+    },
+    {
+      "id": "honest",
+      "title": "A deliberately focused foundation",
+      "body": "Qbits 1.0.1 supports typed state, classes, lists, lifecycle hooks and shared state. Browser APIs use a trusted JavaScript adapter. Routing is experimental; server rendering and nested routing are not supported.",
+      "code": "",
+      "explanation": "The live examples here are compiled .qb components running in this website. Their state and events use the Qbits runtime. Network requests, syntax coloring and clipboard access are supplied by the JavaScript host adapter. These demos have fixed source; they do not compile arbitrary code in the browser."
+    }
   ]
 }

@@ -1,0 +1,12 @@
+component Greeting:
+    name = ""
+    div class="demo-greeting":
+        label text="Your name":
+            input class="demo-name":
+                value=name
+                on input:
+                    name = event.value
+        if name == "":
+            p text="Enter your name"
+        else:
+            p text="Hello, " + name

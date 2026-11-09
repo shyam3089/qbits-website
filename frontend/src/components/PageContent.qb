@@ -1,8 +1,15 @@
+import Counter from "./demos/Counter.qb"
+import Greeting from "./demos/Greeting.qb"
+import Composition from "./demos/Composition.qb"
+
 class ContentSection:
     id = ""
     title = ""
     body = ""
     code = ""
+    language = "qbits"
+    explanation = ""
+    demo = ""
 
 component PageContent:
     title = ""
@@ -35,10 +42,27 @@ component PageContent:
                                 p text=section.body
                                 if section.code != "":
                                     div class="code-block":
-                                        p text=section.code
+                                        span class="code-language" text=section.language
+                                        p class="code-source" text=section.code
                                         button class="copy-code":
                                             span class="fa-regular fa-copy copy-code-icon"
                                             span class="visually-hidden copy-code-label" text="Copy code"
+                                if section.explanation != "":
+                                    div class="code-explanation":
+                                        h3 text="How it works"
+                                        p text=section.explanation
+                                if section.demo != "":
+                                    div class="live-demo":
+                                        p class="demo-heading" text="Try it live"
+                                        if section.demo == "counter":
+                                            p class="demo-hint" text="Click the counter. Its label updates from local state. Reload the page to start again."
+                                            Counter
+                                        if section.demo == "greeting":
+                                            p class="demo-hint" text="Type your name, then clear it to see the conditional branch change."
+                                            Greeting
+                                        if section.demo == "composition":
+                                            p class="demo-hint" text="This panel renders a child counter through its slot. Click to update the child component."
+                                            Composition
                         div class="content-footer":
                             button class="text-button open-npm":
                                 span text="View package on npm"

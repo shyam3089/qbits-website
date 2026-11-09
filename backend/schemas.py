@@ -46,6 +46,9 @@ class Section(BaseModel):
     title: str
     body: str
     code: str = ""
+    language: Literal["qbits", "javascript", "shell", "html", "css"] = "qbits"
+    explanation: str = ""
+    demo: Literal["", "counter", "greeting", "composition"] = ""
 
 
 class Page(BaseModel):

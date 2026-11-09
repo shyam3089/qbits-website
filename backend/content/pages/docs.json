@@ -3,10 +3,60 @@
   "title": "A little code. A good place to start.",
   "intro": "Start with Node.js 22 or newer. Install Qbits, create a component, and connect it to Vite.",
   "sections": [
-    {"id": "installation", "title": "01 — Install Qbits", "body": "In an existing npm project, install the published package. Add Vite as a development dependency if your project does not already use it.", "code": "npm install qbits\nnpm install --save-dev vite"},
-    {"id": "first-component", "title": "02 — Write your first .qb component", "body": "Create src/App.qb. Declare state before the interface. Text expressions are safe text nodes, and numeric values use str() when combined with a string.", "code": "component App:\n    count = 0\n    button text=\"Count: \" + str(count):\n        on click:\n            count = count + 1"},
-    {"id": "vite", "title": "03 — Connect the compiler", "body": "Create vite.config.js using the published plugin. Your index.html should contain a root element and load src/main.js as a module.", "code": "import { defineConfig } from 'vite';\nimport { languagePlugin } from 'qbits/vite';\n\nexport default defineConfig({\n  plugins: [languagePlugin()]\n});"},
-    {"id": "mount", "title": "04 — Mount your interface", "body": "In src/main.js, import the component and the matching runtime. The mount returns a disposer; call it when your host removes the interface.", "code": "import App from './App.qb';\nimport * as runtime from 'qbits/runtime';\n\nconst dispose = App(\n  document.getElementById('app'), runtime\n);"},
-    {"id": "styling", "title": "05 — Make it yours", "body": "Import a relative .css file from a component and assign static classes. CSS custom properties let you share a theme across your interface without changing component code.", "code": "import \"./app.css\"\n\ncomponent App:\n    main class=\"app\":\n        h1 text=\"Hello, Qbits\""}
+    {
+      "id": "installation",
+      "title": "01 — Install Qbits",
+      "body": "In an existing npm project, install the published package. Add Vite as a development dependency if your project does not already use it.",
+      "code": "npm install qbits\nnpm install --save-dev vite",
+      "language": "shell",
+      "explanation": "Run these commands from your project folder. npm install qbits adds the compiler and runtime as a dependency; --save-dev adds Vite for local development and builds. If you do not have a package.json yet, run npm init -y first. Start the development server with npx vite after adding the files below."
+    },
+    {
+      "id": "first-component",
+      "title": "02 — Write your first .qb component",
+      "body": "Create src/App.qb. Declare state before the interface. Text expressions are safe text nodes, and numeric values use str() when combined with a string.",
+      "code": "component App:\n    count = 0\n    div class=\"demo-counter\":\n        button class=\"small-button primary\" text=\"Count: \" + str(count):\n            on click:\n                count = count + 1",
+      "demo": "counter",
+      "explanation": "Save this as src/App.qb. component App declares the file's interface. count = 0 creates numeric state before the markup. button text= binds the label to that state; str(count) converts it to text. Each click assigns count + 1 back to count, and the bound label updates. The static classes are optional styling hooks."
+    },
+    {
+      "id": "vite",
+      "title": "03 — Connect the compiler",
+      "body": "Create vite.config.js using the published plugin. Your index.html should contain a root element and load src/main.js as a module.",
+      "code": "import { defineConfig } from 'vite';\nimport { languagePlugin } from 'qbits/vite';\n\nexport default defineConfig({\n  plugins: [languagePlugin()]\n});",
+      "language": "javascript",
+      "explanation": "defineConfig provides Vite configuration helpers. languagePlugin comes from qbits/vite and compiles imported .qb files. Register it in plugins so Vite can load App.qb from your JavaScript entry point. Save this file as vite.config.js at the project root."
+    },
+    {
+      "id": "html-entry",
+      "title": "Create the HTML entry point",
+      "body": "Create index.html in the project root. This connects Vite to the JavaScript entry point in the next step.",
+      "language": "html",
+      "code": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My Qbits app</title>\n  </head>\n  <body>\n    <div id=\"app\"></div>\n    <script type=\"module\" src=\"/src/main.js\"></script>\n  </body>\n</html>",
+      "explanation": "The empty div is the mounting target; its id must match getElementById in main.js. The module script loads that file through Vite. The viewport meta tag lets the layout use the device width on mobile."
+    },
+    {
+      "id": "mount",
+      "title": "04 — Mount your interface",
+      "body": "In src/main.js, import the component and the matching runtime. The mount returns a disposer; call it when your host removes the interface.",
+      "code": "import App from './App.qb';\nimport * as runtime from 'qbits/runtime';\n\nconst dispose = App(\n  document.getElementById('app'), runtime\n);",
+      "language": "javascript",
+      "explanation": "App is the compiled component factory, and runtime supplies its reactive behavior. document.getElementById selects the host element from index.html. App(host, runtime) mounts the interface and returns dispose. Call dispose() when your host removes the app so listeners and subscriptions are released."
+    },
+    {
+      "id": "styling",
+      "title": "05 — Make it yours",
+      "body": "Import a relative .css file from a component and assign static classes. CSS custom properties let you share a theme across your interface without changing component code.",
+      "code": "import \"./app.css\"\n\ncomponent App:\n    main class=\"app\":\n        h1 text=\"Hello, Qbits\"",
+      "explanation": "The side-effect import loads src/app.css. class=\"app\" gives the main element a CSS hook, and text= creates safe text content for the heading. For example, add .app { padding: 24px; color: #7936ac; } to app.css. This is an alternative App.qb layout; replace the counter with it when you want to try styling."
+    },
+    {
+      "id": "reactive-input",
+      "title": "Explore input and conditional rendering",
+      "body": "Once the counter works, try this alternative src/App.qb to connect typed input to reactive text.",
+      "code": "component App:\n    name = \"\"\n    div class=\"demo-greeting\":\n        label text=\"Your name\":\n            input class=\"demo-name\":\n                value=name\n                on input:\n                    name = event.value\n        if name == \"\":\n            p text=\"Enter your name\"\n        else:\n            p text=\"Hello, \" + name",
+      "demo": "greeting",
+      "explanation": "The input reads name through value=name. Each on input event writes event.value into the same string state. The if condition compares it with an empty string and chooses the prompt or greeting. Clearing the field brings the prompt back. No manual DOM updates are needed."
+    }
   ]
 }

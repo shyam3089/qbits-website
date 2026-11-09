@@ -19,6 +19,12 @@
   --border-soft: #ffffff26;
   --surface: #0d0d2b;
   --code-bg: var(--surface);
+  --banner-opacity: 1;
+  --banner-overlay: linear-gradient(90deg, var(--frame-bg) 0%, color-mix(in srgb, var(--frame-bg) 92%, transparent) 30%, color-mix(in srgb, var(--frame-bg) 35%, transparent) 70%, transparent 100%);
+  --syntax-keyword: #e9a6ff;
+  --syntax-string: #a8f0d0;
+  --syntax-number: #ffc995;
+  --syntax-builtin: #83d9ff;
   --field-bg: #05061c;
   --success: #a8f0d0;
   --error: #ffacbf;
@@ -98,7 +104,7 @@
   --terminal-width-limit: 0.75;
   --terminal-curve-limit: 0.3;
   --nav-height: 110px;
-  --nav-padding-x: 61px;
+  --nav-padding-x: 50px;
   --brand-gap: 12px;
   --brand-offset-y: 6px;
   --brand-symbol-width: 48px;
@@ -122,7 +128,7 @@
   --github-right: 61px;
   --github-top: 32px;
   --github-width: 160px;
-  --github-height: 49px;
+  --github-height: 47px;
   --github-font-size: 18px;
   --github-icon-size: 27px;
   --github-gap: 12px;
@@ -162,6 +168,7 @@
   --terminal-height: 43px;
   --terminal-font-size: 20px;
   --terminal-gap: 27px;
+  --terminal-indicator-gap: 10px;
   --terminal-prompt-size: 31px;
   --terminal-divider-height: 30px;
   --terminal-divider-width: 1px;
@@ -170,8 +177,8 @@
   --terminal-copy-size: 17px;
   --terminal-copy-gap: 20px;
   --terminal-max-width: 550px;
-  --content-left: 78px;
-  --content-right: 78px;
+  --content-left: 50px;
+  --content-right: 50px;
   --content-top: 142px;
   --content-bottom: 108px;
   --content-max-width: 910px;
@@ -252,6 +259,10 @@
 }
 
 :root[data-theme='apple'] {
+  --syntax-keyword: #7936ac;
+  --syntax-string: #216a45;
+  --syntax-number: #9c4814;
+  --syntax-builtin: #185d9c;
   color-scheme: light;
   --page-bg: #eef0f5;
   --frame-bg: #ffffff;
@@ -313,7 +324,7 @@
 
 @media (--mobile) {
   :root { --frame-inset: 0px; --github-inset-width: 185px; --github-inset-depth: 79px; --github-curve-width: 75px; --brand-offset-y: 0px; }
-  :root { --page-gutter: 12px; --page-top: 12px; --page-bottom: 12px; --frame-radius: 28px; --frame-min-height: 650px; --frame-stroke: 4px; --nav-height: 130px; --nav-padding-x: 24px; --brand-font-size: 30px; --brand-symbol-width: 34px; --brand-symbol-height: 39px; --brand-gap: 8px; --nav-links-left: 17px; --nav-links-right: 17px; --nav-font-size: 14px; --nav-item-padding-x: 7px; --github-right: 24px; --github-top: 24px; --github-width: 115px; --github-height: 40px; --github-font-size: 14px; --github-icon-size: 22px; --github-gap: 8px; --hero-left: 28px; --hero-top: 164px; --hero-right: 24px; --hero-logo-width: 37px; --hero-logo-height: 43px; --hero-eyebrow-gap: 12px; --eyebrow-size: 12px; --eyebrow-line-width: 25px; --eyebrow-line-gap: 0px; --headline-size: 38px; --headline-margin-top: 25px; --headline-leading: 1.15; --description-size: 17px; --description-leading: 1.55; --description-margin-top: 23px; --actions-gap: 13px; --actions-margin-top: 34px; --button-width: 75%; --button-height: 38px; --button-font-size: 13px; --button-icon-size: 18px; --button-gap: 7.5px; --terminal-left: 28px; --terminal-bottom: 22px; --terminal-font-size: 17px; --terminal-gap: 13px; --terminal-prompt-size: 24px; --terminal-divider-height: 25px; --terminal-cursor-width: 2px; --terminal-cursor-height: 20px; --terminal-copy-gap: 8px; --terminal-copy-size: 15px; --content-left: 28px; --content-right: 24px; --content-top: 155px; --content-bottom: 100px; --content-title-size: 30px; --content-body-size: 16px; --content-intro-size: 16px; --content-section-title-size: 21px; --admin-grid-gap: 17px; --code-padding: 14px; --code-size: 12px; --notice-top: 130px; --notice-right: 24px; --status-font-size: 12px; }
+  :root { --page-gutter: 12px; --page-top: 12px; --page-bottom: 12px; --frame-radius: 28px; --frame-min-height: 650px; --frame-stroke: 4px; --nav-height: 130px; --nav-padding-x: 24px; --brand-font-size: 30px; --brand-symbol-width: 34px; --brand-symbol-height: 39px; --brand-gap: 8px; --nav-links-left: 17px; --nav-links-right: 17px; --nav-font-size: 14px; --nav-item-padding-x: 7px; --github-right: 24px; --github-top: 24px; --github-width: 115px; --github-height: 40px; --github-font-size: 14px; --github-icon-size: 22px; --github-gap: 8px; --hero-left: 28px; --hero-top: 164px; --hero-right: 24px; --hero-logo-width: 37px; --hero-logo-height: 43px; --hero-eyebrow-gap: 12px; --eyebrow-size: 12px; --eyebrow-line-width: 25px; --eyebrow-line-gap: 0px; --headline-size: 38px; --headline-margin-top: 25px; --headline-leading: 1.15; --description-size: 17px; --description-leading: 1.55; --description-margin-top: 23px; --actions-gap: 13px; --actions-margin-top: 34px; --button-width: 75%; --button-height: 38px; --button-font-size: 13px; --button-icon-size: 18px; --button-gap: 7.5px; --terminal-left: 28px; --terminal-bottom: 22px; --terminal-font-size: 17px; --terminal-gap: 13px; --terminal-indicator-gap: 7px; --terminal-prompt-size: 24px; --terminal-divider-height: 25px; --terminal-cursor-width: 2px; --terminal-cursor-height: 20px; --terminal-copy-gap: 8px; --terminal-copy-size: 15px; --content-left: 28px; --content-right: 24px; --content-top: 155px; --content-bottom: 100px; --content-title-size: 30px; --content-body-size: 16px; --content-intro-size: 16px; --content-section-title-size: 21px; --admin-grid-gap: 17px; --code-padding: 14px; --code-size: 12px; --notice-top: 130px; --notice-right: 24px; --status-font-size: 12px; }
 }
 
 @media (--compact) {

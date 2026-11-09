@@ -163,10 +163,11 @@ test('keyboard skip control, focused navigation and reduced motion', async ({ pa
   await expect(page.getByRole('heading', { name: 'A little code. A good place to start.' })).toBeVisible();
   expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
   expect(await page.locator('.terminal-cursor').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
-  const before = await page.locator('canvas').evaluate(canvas => canvas.toDataURL());
+  const before = await page.locator('.banner-video').evaluate(video => video.currentTime);
   // Observe across multiple animation frames instead of relying on a screenshot freeze.
   await page.evaluate(() => new Promise(resolve => { let count = 0; const frame = () => ++count === 8 ? resolve() : requestAnimationFrame(frame); frame(); }));
-  expect(await page.locator('canvas').evaluate(canvas => canvas.toDataURL())).toBe(before);
+  expect(await page.locator('.banner-video').evaluate(video => video.currentTime)).toBe(before);
+  await expect(page.locator('.banner-video source')).toHaveCount(0);
 });
 
 test('real Firefox clipboard write succeeds from a user click', async ({ page }) => {
@@ -193,11 +194,24 @@ for (const [label, width, height] of [['tablet', 820, 1180], ['mobile', 390, 844
   });
 }
 
-test('animated wave changes when motion is allowed', async ({ page }) => {
+test('banner video plays silently, pauses off home, and respects motion changes', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);
-  const before = await page.locator('canvas').evaluate(canvas => canvas.toDataURL());
-  await expect.poll(() => page.locator('canvas').evaluate(canvas => canvas.toDataURL())).not.toBe(before);
+  const video = page.locator('.banner-video');
+  await expect.poll(() => video.evaluate(video => video.currentTime)).toBeGreaterThan(0);
+  expect(await video.evaluate(video => video.muted && video.loop && video.playsInline)).toBe(true);
+  await page.getByRole('button', { name: 'Docs', exact: true }).click();
+  await expect(video).toBeHidden();
+  expect(await video.evaluate(video => video.paused)).toBe(true);
+  await page.getByRole('button', { name: 'Home', exact: true }).click();
+  await expect(video).toBeVisible();
+  await expect.poll(() => video.evaluate(video => video.paused)).toBe(false);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(video.locator('source')).toHaveCount(0);
+  expect(await video.evaluate(video => video.paused)).toBe(true);
+  await page.screenshot({ path: '../artifacts/video-banner-desktop.png', animations: 'disabled' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: '../artifacts/video-banner-mobile.png', animations: 'disabled' });
 });
 
 test('admin authentication, persistence, theme preview, validation and logout', async ({ page, request }) => {

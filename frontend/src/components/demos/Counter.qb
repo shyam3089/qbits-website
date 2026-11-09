@@ -1,0 +1,6 @@
+component Counter:
+    count = 0
+    div class="demo-counter":
+        button class="small-button primary" text="Count: " + str(count):
+            on click:
+                count = count + 1

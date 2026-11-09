@@ -9,7 +9,9 @@ import App from './App.qb';
 import PageContent from './components/PageContent.qb';
 import Admin from './components/Admin.qb';
 import * as runtime from 'qbits/runtime';
-import { mountFrameArt, mountQuantum } from './platform/visuals.js';
+import { mountFrameArt } from './platform/visuals.js';
+import { mountBanner } from './platform/banner.js';
+import { highlightCode } from './platform/code.js';
 
 // Qbits 1.0.1 deliberately has no async expressions, arbitrary DOM attributes,
 // canvas or clipboard API. This host adapter supplies those browser capabilities;
@@ -18,7 +20,7 @@ const root = document.getElementById('app');
 const app = App(root, runtime);
 const frame = root.querySelector('.site-frame');
 const frameArt = mountFrameArt(root.querySelector('.frame-art'));
-const quantum = mountQuantum(root.querySelector('.quantum-background'));
+const quantum = mountBanner(root.querySelector('.quantum-background'));
 const routeNames = new Set(['home', 'features', 'docs', 'examples', 'roadmap', 'admin']);
 const contentPageNames = new Set(['features', 'docs', 'examples', 'roadmap']);
 const themeNames = ['neon', 'ultraviolet', 'midnight', 'apple'];
@@ -75,6 +77,7 @@ function accessibility() {
   attrs(root.querySelector('.inner-view'), { tabindex: '0', 'aria-label': `${activePage} content` });
   attrs(root.querySelector('.section-sidebar'), { role: 'navigation', 'aria-label': 'Page sections' });
   for (const code of root.querySelectorAll('.code-block p')) attrs(code, { role: 'code' });
+  for (const output of root.querySelectorAll('.demo-greeting > p')) attrs(output, { role: 'status', 'aria-live': 'polite' });
 }
 
 function wireSectionNavigation(sections) {
@@ -204,6 +207,7 @@ async function route(page, push = false, focus = false) {
   }
   app.updateState({ page });
   frame.dataset.page = page;
+  quantum.setPage(page);
   frame.classList.toggle('content-page', contentPageNames.has(page));
   updateTitle(); accessibility();
   if (focus) root.querySelector('.view-container').focus({ preventScroll: true });
@@ -222,6 +226,10 @@ async function route(page, push = false, focus = false) {
     if (version !== requestVersion) return;
     pageView.updateState({ title: result.title, intro: result.intro, sections: result.sections, navigation: contentPageNames.has(page), loading: false, error: '' });
     if (contentPageNames.has(page)) wireSectionNavigation(result.sections);
+    for (const section of root.querySelectorAll('.content-section')) {
+      const code = section.querySelector('.code-source');
+      if (code) highlightCode(code, section.querySelector('.code-language').textContent);
+    }
   } catch (error) {
     if (version !== requestVersion || error.name === 'AbortError') return;
     pageView.updateState({ loading: false, error: 'We could not load this page. Check your connection and try again.' });
