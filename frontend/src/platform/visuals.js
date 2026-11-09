@@ -45,7 +45,7 @@ export function mountFrameArt(target) {
     const { width: w, height: h } = target.getBoundingClientRect();
     const r = value('--frame-radius'), s = value('--frame-inset'), ir = r - s;
     const g = Math.max(r, w - value('--github-inset-width'));
-    const d = value('--github-inset-depth'), c = value('--github-curve-width');
+    const d = value('--terminal-inset-height'), c = value('--github-curve-width');
     const ty = h - value('--terminal-inset-height'), lower = h - s;
     const tw = Math.min(value('--terminal-inset-width'), w * value('--terminal-width-limit'));
     const tc = Math.min(value('--terminal-curve-width'), w * value('--terminal-curve-limit')), start = tw - tc;

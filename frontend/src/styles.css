@@ -208,7 +208,7 @@ p, h1, h2, h3 {
   left: 0;
   width: var(--nav-active-width, 0px);
   height: calc(100% - 6px);
-  border-radius: 8px;
+  border-radius: 24px;
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   pointer-events: none;
   transform: translate(var(--nav-active-x, 0px), -50%);
@@ -331,7 +331,7 @@ p, h1, h2, h3 {
   display: grid;
   grid-template-columns: repeat(4, max-content);
   gap: 0;
-  margin-top: clamp(28px, 4vh, 48px);
+  margin-top: clamp(15px, 1vh, 45px);
 }
 
 .hero-feature {
@@ -508,27 +508,26 @@ p, h1, h2, h3 {
 }
 
 .action-button:hover::after, .action-button:focus-visible::after {
-  animation: cta-shimmer 1.6s ease-in-out infinite;
+  animation: cta-shimmer 1.2s ease-in-out infinite;
 }
 
 @keyframes cta-shimmer {
   0% {
     background-position: 100% 0;
-    opacity: 0;
-  }
-
-  15%, 65% {
     opacity: 1;
   }
 
-  80%, 100% {
+  65% {
     background-position: 0% 0;
+    opacity: 1;
+  }
+
+  100% {
     opacity: 0;
   }
 }
 
 .action-button:hover, .github-button:hover {
-  border-color: var(--control-hover-border);
   box-shadow: var(--control-hover-shadow);
 }
 
@@ -537,10 +536,6 @@ p, h1, h2, h3 {
   color: var(--button-ink);
   border-color: transparent;
   box-shadow: var(--button-shadow);
-}
-
-.button-install:hover {
-  border-color: transparent;
 }
 
 .button-icon {

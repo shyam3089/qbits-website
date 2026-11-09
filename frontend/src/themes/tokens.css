@@ -57,7 +57,6 @@
   --control-bg: transparent;
   --control-border: var(--border);
   --control-shadow: none;
-  --control-hover-border: var(--accent);
   --control-hover-shadow: var(--control-shadow);
   --field-focus: 0 0 0 3px #bb72ff40;
   --wave-glow: 25;
@@ -102,7 +101,6 @@
   --curve-stroke: 2.6px;
   --frame-inset: 0px;
   --github-inset-width: 338px;
-  --github-inset-depth: 98px;
   --github-curve-width: 162px;
   --terminal-inset-width: 570px;
   --terminal-inset-height: 82px;
@@ -114,7 +112,7 @@
   --terminal-curve-control-b: 0.4;
   --terminal-width-limit: 0.75;
   --terminal-curve-limit: 0.3;
-  --nav-height: 110px;
+  --nav-height: 82px;
   --nav-padding-x: 50px;
   --brand-gap: 12px;
   --brand-offset-y: 6px;
@@ -136,7 +134,7 @@
   --nav-item-padding-x: 15px;
   --nav-item-padding-y: 13px;
   --github-right: 50px;
-  --github-top: 32px;
+  --github-top: 18px;
   --github-width: 160px;
   --github-height: 47px;
   --github-font-size: 18px;
@@ -312,7 +310,6 @@
   --control-bg: #ffffffd9;
   --control-border: #d1d1d6;
   --control-shadow: 0 1px 2px #0000000d, 0 8px 18px #4c527020;
-  --control-hover-border: #aaa8c7;
   --control-hover-shadow: 0 2px 4px #00000012, 0 8px 22px #4c52701a;
   --button-border: 1px;
   --field-focus: 0 0 0 3px #7464d833;
@@ -336,7 +333,7 @@
 }
 
 @media (--mobile) {
-  :root { --frame-inset: 0px; --github-inset-width: 185px; --github-inset-depth: 79px; --github-curve-width: 75px; --brand-offset-y: 0px; }
+  :root { --frame-inset: 0px; --github-inset-width: 185px; --github-curve-width: 75px; --brand-offset-y: 0px; }
   :root { --page-gutter: 12px; --page-top: 12px; --page-bottom: 12px; --frame-radius: 28px; --frame-min-height: 650px; --frame-stroke: 4px; --nav-height: 130px; --nav-padding-x: 24px; --brand-font-size: 30px; --brand-symbol-width: 34px; --brand-symbol-height: 39px; --brand-gap: 8px; --nav-links-left: 17px; --nav-links-right: 17px; --nav-font-size: 14px; --nav-item-padding-x: 7px; --github-right: 24px; --github-top: 24px; --github-width: 115px; --github-height: 40px; --github-font-size: 14px; --github-icon-size: 22px; --github-gap: 8px; --hero-left: 28px; --hero-top: 164px; --hero-right: 24px; --hero-logo-width: 37px; --hero-logo-height: 43px; --hero-eyebrow-gap: 12px; --eyebrow-size: 12px; --eyebrow-line-width: 25px; --eyebrow-line-gap: 0px; --headline-size: 38px; --headline-margin-top: 25px; --headline-leading: 1.15; --description-size: 17px; --description-leading: 1.55; --description-margin-top: 23px; --actions-gap: 13px; --actions-margin-top: 34px; --button-width: 75%; --button-height: 38px; --button-font-size: 13px; --button-icon-size: 18px; --button-gap: 7.5px; --terminal-left: 28px; --terminal-bottom: 22px; --terminal-font-size: 17px; --terminal-gap: 13px; --terminal-indicator-gap: 7px; --terminal-prompt-size: 24px; --terminal-divider-height: 25px; --terminal-cursor-width: 2px; --terminal-cursor-height: 20px; --terminal-copy-gap: 8px; --terminal-copy-size: 15px; --content-left: 28px; --content-right: 24px; --content-top: 155px; --content-bottom: 100px; --content-title-size: 30px; --content-body-size: 16px; --content-intro-size: 16px; --content-section-title-size: 21px; --admin-grid-gap: 17px; --code-padding: 14px; --code-size: 12px; --notice-top: 130px; --notice-right: 24px; --status-font-size: 12px; }
 }
 
