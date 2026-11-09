@@ -18,7 +18,7 @@ p, h1, h2, h3 { margin: 0; }
 .frame-art svg { width: 100%; height: 100%; overflow: visible; }
 .structure-edge { fill: none; stroke: var(--structure-line); stroke-width: var(--structure-stroke); stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; shape-rendering: geometricPrecision; }
 .quantum-background { position: absolute; inset: 0; z-index: -1; opacity: var(--banner-opacity); pointer-events: none; transition: opacity var(--transition-duration) var(--transition-ease); }
-.banner-video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.banner-canvas { display: block; width: 100%; height: 100%; }
 .quantum-background::after { content: ''; position: absolute; inset: 0; background: var(--banner-overlay); }
 .site-frame[data-page]:not([data-page='home']) .quantum-background { display: none; }
 .navigation { height: var(--nav-height); position: relative; z-index: 4; display: flex; align-items: center; padding-inline: var(--nav-padding-x); }

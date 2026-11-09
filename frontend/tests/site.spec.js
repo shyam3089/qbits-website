@@ -163,11 +163,11 @@ test('keyboard skip control, focused navigation and reduced motion', async ({ pa
   await expect(page.getByRole('heading', { name: 'A little code. A good place to start.' })).toBeVisible();
   expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
   expect(await page.locator('.terminal-cursor').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
-  const before = await page.locator('.banner-video').evaluate(video => video.currentTime);
+  const before = await page.locator('.banner-canvas').evaluate(canvas => canvas.toDataURL());
   // Observe across multiple animation frames instead of relying on a screenshot freeze.
   await page.evaluate(() => new Promise(resolve => { let count = 0; const frame = () => ++count === 8 ? resolve() : requestAnimationFrame(frame); frame(); }));
-  expect(await page.locator('.banner-video').evaluate(video => video.currentTime)).toBe(before);
-  await expect(page.locator('.banner-video source')).toHaveCount(0);
+  expect(await page.locator('.banner-canvas').evaluate(canvas => canvas.toDataURL())).toBe(before);
+  await expect(page.locator('video')).toHaveCount(0);
 });
 
 test('real Firefox clipboard write succeeds from a user click', async ({ page }) => {
@@ -194,24 +194,30 @@ for (const [label, width, height] of [['tablet', 820, 1180], ['mobile', 390, 844
   });
 }
 
-test('banner video plays silently, pauses off home, and respects motion changes', async ({ page }) => {
+test('light banner animates, pauses off home, and respects motion changes', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);
-  const video = page.locator('.banner-video');
-  await expect.poll(() => video.evaluate(video => video.currentTime)).toBeGreaterThan(0);
-  expect(await video.evaluate(video => video.muted && video.loop && video.playsInline)).toBe(true);
+  const canvas = page.locator('.banner-canvas');
+  const snapshot = () => canvas.evaluate(canvas => canvas.toDataURL());
+  const initial = await snapshot();
+  await expect.poll(snapshot).not.toBe(initial);
+  await expect(page.locator('video')).toHaveCount(0);
   await page.getByRole('button', { name: 'Docs', exact: true }).click();
-  await expect(video).toBeHidden();
-  expect(await video.evaluate(video => video.paused)).toBe(true);
+  await expect(canvas).toBeHidden();
+  const paused = await snapshot();
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  expect(await snapshot()).toBe(paused);
   await page.getByRole('button', { name: 'Home', exact: true }).click();
-  await expect(video).toBeVisible();
-  await expect.poll(() => video.evaluate(video => video.paused)).toBe(false);
+  await expect(canvas).toBeVisible();
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(video.locator('source')).toHaveCount(0);
-  expect(await video.evaluate(video => video.paused)).toBe(true);
-  await page.screenshot({ path: '../artifacts/video-banner-desktop.png', animations: 'disabled' });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
+  const still = await snapshot();
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  expect(await snapshot()).toBe(still);
+  expect(await canvas.evaluate(canvas => canvas.getContext('2d').getImageData(0, 0, 1, 1).data[3])).toBe(0);
+  await page.screenshot({ path: '../artifacts/light-banner-desktop.png', animations: 'disabled' });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.screenshot({ path: '../artifacts/video-banner-mobile.png', animations: 'disabled' });
+  await page.screenshot({ path: '../artifacts/light-banner-mobile.png', animations: 'disabled' });
 });
 
 test('admin authentication, persistence, theme preview, validation and logout', async ({ page, request }) => {
