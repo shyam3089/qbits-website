@@ -2,16 +2,40 @@ import ActionButton from "./ActionButton.qb"
 
 component Hero(eyebrow = "", headline = "", highlight = "", description = "", second = ""):
     section class="hero":
-        div class="hero-eyebrow":
-            span class="hero-symbol"
-            span text=eyebrow
-            span class="eyebrow-line"
-        h1 class="headline":
-            span text=headline + " "
-            span class="headline-highlight" text=highlight
-        p class="hero-description":
-            span text=description
-            span text=second
-        div class="hero-actions":
-            ActionButton class="button-install" label="Install qbits"
-            ActionButton class="button-docs" label="Documentation"
+        div class="hero-layout":
+            div class="hero-copy":
+                div class="hero-eyebrow":
+                    span text=eyebrow
+                    span class="eyebrow-line"
+                h1 class="headline":
+                    span text=headline + " "
+                    span class="headline-highlight" text=highlight
+                p class="hero-description":
+                    span text=description
+                    span text=second
+                div class="hero-actions":
+                    ActionButton class="button-install" label="Install qbits"
+                    ActionButton class="button-docs" label="Documentation"
+            div class="hero-art":
+                span class="hero-art-logo"
+            div class="hero-features":
+                div class="hero-feature":
+                    span class="icon hero-feature-icon feature-code"
+                    div class="hero-feature-copy":
+                        span class="hero-feature-title" text="Simple Syntax"
+                        span text="Clean and intuitive"
+                div class="hero-feature":
+                    span class="icon hero-feature-icon feature-bolt"
+                    div class="hero-feature-copy":
+                        span class="hero-feature-title" text="Reactive UI"
+                        span text="Fast and efficient"
+                div class="hero-feature":
+                    span class="icon hero-feature-icon feature-components"
+                    div class="hero-feature-copy":
+                        span class="hero-feature-title" text="Components"
+                        span text="Reusable and modular"
+                div class="hero-feature":
+                    span class="icon hero-feature-icon feature-shield"
+                    div class="hero-feature-copy":
+                        span class="hero-feature-title" text="Modern & Secure"
+                        span text="Built for real-world apps"

@@ -67,6 +67,7 @@ function accessibility() {
   attrs(root.querySelector('.terminal-command'), { 'aria-label': 'Copy install command' });
   attrs(root.querySelector('.github-button'), { role: 'link', 'aria-label': 'Qbits on GitHub (opens a new tab)' });
   attrs(root.querySelector('.hero-symbol'), { role: 'img', 'aria-label': 'Qbits symbol' });
+  attrs(root.querySelector('.hero-art-logo'), { role: 'img', 'aria-label': 'Qbits symbol' });
   for (const icon of root.querySelectorAll('.brand-symbol, .button-icon, .github-icon, .terminal-copy-icon, .terminal-prompt, .copy-code-icon, .external-icon, .terminal-divider, .terminal-cursor, .eyebrow-line')) attrs(icon, { 'aria-hidden': 'true' });
   for (const page of routeNames) for (const item of root.querySelectorAll(`.nav-item.nav-${page}`)) {
     if (page === activePage) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');

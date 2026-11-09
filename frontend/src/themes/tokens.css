@@ -239,6 +239,10 @@
   --icon-copy: url('@tabler/icons/outline/copy.svg');
   --icon-check: url('@tabler/icons/outline/check.svg');
   --icon-external: url('@tabler/icons/outline/external-link.svg');
+  --icon-code: url('@tabler/icons/outline/code.svg');
+  --icon-bolt: url('@tabler/icons/outline/bolt.svg');
+  --icon-components: url('@tabler/icons/outline/components.svg');
+  --icon-shield: url('@tabler/icons/outline/shield-check.svg');
 }
 
 :root[data-theme='ultraviolet'] {
