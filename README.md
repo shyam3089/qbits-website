@@ -59,7 +59,7 @@ Open **http://127.0.0.1:8108**. FastAPI serves the built frontend, hashed assets
 - The same `tokens.css` owns breakpoint values and artwork geometry. Vite expands the named media conditions from its `--breakpoint-*` tokens because CSS custom properties cannot be used directly in media query conditions. Breakpoint changes require rebuilding; other tokens can be managed in admin.
 - `frontend/src/styles.css`: component styles consuming the theme tokens.
 - `frontend/src/platform/visuals.js`: decorative SVG frame geometry.
-- `frontend/src/platform/banner.js`: a transparent canvas animation of pastel lavender, blue and pink ribbons. It pauses off the home page and in hidden tabs, and renders a still composition for reduced motion. Colors, opacity and the readability gradient are controlled by the `--banner-*` tokens in `tokens.css`.
+- `frontend/src/platform/banner.js`: a transparent quantum field with lavender, blue and pink wave bundles and drifting particles. It pauses off the home page and in hidden tabs, and renders a still composition for reduced motion. Colors, opacity and the readability gradient are controlled by the `--banner-*` tokens in `tokens.css`.
 - `frontend/src/main.js`: browser API adapter, API loading, history, clipboard, external destinations and accessibility attributes.
 - `frontend/src/assets/`: supplied original logo files, optimised logo symbol and local icons. Poppins is bundled locally through `@fontsource/poppins`; no third-party font request.
 - `backend/content/site.json`: validated default site settings.

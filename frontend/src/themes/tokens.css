@@ -20,10 +20,10 @@
   --surface: #0d0d2b;
   --code-bg: var(--surface);
   --banner-opacity: 1;
-  --banner-lavender: #a18ae5;
-  --banner-blue: #83b3ed;
-  --banner-pink: #e8a1c9;
-  --banner-overlay: linear-gradient(90deg, var(--frame-bg) 0%, color-mix(in srgb, var(--frame-bg) 92%, transparent) 30%, color-mix(in srgb, var(--frame-bg) 35%, transparent) 70%, transparent 100%);
+  --banner-lavender: #9470e3;
+  --banner-blue: #629ce8;
+  --banner-pink: #df7bb9;
+  --banner-overlay: linear-gradient(90deg, var(--frame-bg) 0%, color-mix(in srgb, var(--frame-bg) 85%, transparent) 30%, color-mix(in srgb, var(--frame-bg) 15%, transparent) 70%, transparent 100%);
   --syntax-keyword: #e9a6ff;
   --syntax-string: #a8f0d0;
   --syntax-number: #ffc995;
