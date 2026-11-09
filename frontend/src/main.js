@@ -316,12 +316,10 @@ async function copy(text, button) {
       const label = button.querySelector('.copy-code-label');
       const icon = button.querySelector('.copy-code-icon');
       label.textContent = 'Copied!';
-      icon.classList.replace('fa-regular', 'fa-solid');
       icon.classList.replace('fa-copy', 'fa-check');
       setTimeout(() => {
         if (!button.isConnected) return;
         label.textContent = 'Copy code';
-        icon.classList.replace('fa-solid', 'fa-regular');
         icon.classList.replace('fa-check', 'fa-copy');
       }, 2000);
     }

@@ -45,12 +45,8 @@ component PageContent:
                                         span class="code-language" text=section.language
                                         p class="code-source" text=section.code
                                         button class="copy-code":
-                                            span class="fa-regular fa-copy copy-code-icon"
+                                            span class="fa-solid fa-copy copy-code-icon"
                                             span class="visually-hidden copy-code-label" text="Copy code"
-                                if section.explanation != "":
-                                    div class="code-explanation":
-                                        h3 text="How it works"
-                                        p text=section.explanation
                                 if section.demo != "":
                                     div class="live-demo":
                                         p class="demo-heading" text="Try it live"
@@ -63,6 +59,10 @@ component PageContent:
                                         if section.demo == "composition":
                                             p class="demo-hint" text="This panel renders a child counter through its slot. Click to update the child component."
                                             Composition
+                                if section.explanation != "":
+                                    div class="code-explanation":
+                                        h3 text="How it works"
+                                        p text=section.explanation
                         div class="content-footer":
                             button class="text-button open-npm":
                                 span text="View package on npm"

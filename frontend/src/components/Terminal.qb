@@ -7,5 +7,5 @@ component Terminal(prefix = "npm", remainder = " install qbits", feedback = ""):
                 span class="command-prefix" text=prefix
                 span text=remainder
             span class="terminal-cursor"
-            span class="fa-regular fa-copy terminal-copy-icon"
+            span class="fa-solid fa-copy terminal-copy-icon"
         span class="copy-feedback" text=feedback

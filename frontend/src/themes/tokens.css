@@ -19,6 +19,7 @@
   --border-soft: #ffffff26;
   --surface: #0d0d2b;
   --code-bg: var(--surface);
+  --code-text: #eef2f8;
   --banner-opacity: 1;
   --banner-orange: #ff9656;
   --banner-coral: #f6756c;
@@ -31,6 +32,8 @@
   --syntax-string: #a8f0d0;
   --syntax-number: #ffc995;
   --syntax-builtin: #83d9ff;
+  --syntax-comment: #aab6ca;
+  --syntax-punctuation: #cbd5e1;
   --field-bg: #05061c;
   --success: #a8f0d0;
   --error: #ffacbf;
@@ -141,6 +144,7 @@
   --hero-left: 78px;
   --hero-top: 169px;
   --hero-right: 35px;
+  --hero-shadow-space: 32px;
   --hero-eyebrow-gap: 23px;
   --hero-logo-width: 50px;
   --hero-logo-height: 56px;
@@ -265,12 +269,8 @@
 }
 
 :root[data-theme='apple'] {
-  --syntax-keyword: #7936ac;
-  --syntax-string: #216a45;
-  --syntax-number: #9c4814;
-  --syntax-builtin: #185d9c;
   color-scheme: light;
-  --page-bg: #eef0f5;
+  --page-bg: #d1d4dd;
   --frame-bg: #ffffff;
   --text: #1d1d1f;
   --muted: #515154;
@@ -283,7 +283,7 @@
   --border: #1d1d1f;
   --border-soft: #0000001a;
   --surface: #f5f5f7;
-  --code-bg: #dfe2ea;
+  --code-bg: #202020;
   --field-bg: #ffffff;
   --success: #16803c;
   --error: #d70015;
@@ -299,7 +299,7 @@
   --button-ink: #ffffff;
   --headline-gradient: linear-gradient(105deg, #e98569, #806bd1);
   --button-gradient: linear-gradient(110deg, var(--button-start), var(--button-end));
-  --background-gradient: linear-gradient(145deg, #fafafa 0%, var(--page-bg) 58%, #e8eaf4 100%);
+  --background-gradient: linear-gradient(145deg, #e0e2e8 0%, var(--page-bg) 58%, #c4c9d7 100%);
   --frame-shadow: 0 18px 50px #4c527026;
   --button-shadow: 0 8px 16px #5f66bf45;
   --control-bg: #ffffffd9;

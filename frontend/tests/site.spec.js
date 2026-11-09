@@ -16,7 +16,7 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
     const { width, height } = shell.ownerSVGElement.viewBox.baseVal;
     const filled = (x, y) => shell.isPointInFill(new DOMPoint(x, y));
     return {
-      frame: rect('.site-frame'), brand: rect('.brand'), github: rect('.github-button'), hero: rect('.hero'), actions: rect('.hero-actions'),
+      frame: rect('.site-frame'), brand: rect('.brand'), github: rect('.github-button'), heroContent: rect('.hero-eyebrow'), actions: rect('.hero-actions'),
       shell: {
         fill: getComputedStyle(shell).fill,
         outerEdges: [filled(width / 4, 8), filled(8, height / 2), filled(width - 8, height / 2), filled(width * .75, height - 8)],
@@ -29,7 +29,7 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
   });
   expect(layout.frame).toEqual({ x: 44, y: 20, width: 1166, height: 723 });
   expect(Math.abs((layout.brand.x - layout.frame.x) - ((layout.frame.x + layout.frame.width) - (layout.github.x + layout.github.width)))).toBeLessThan(1);
-  expect(layout.hero.x).toBe(122);
+  expect(layout.heroContent.x).toBe(122);
   expect(Math.abs(layout.actions.y - 467)).toBeLessThan(5);
   expect(layout.shell.fill).not.toBe('none');
   expect(layout.shell.outerEdges).toEqual([false, false, false, false]);
