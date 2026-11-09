@@ -1,7 +1,4 @@
 component ActionButton(label = ""):
     button class="action-button":
-        span class="cta-wave cta-wave--first"
-        span class="cta-wave cta-wave--second"
-        span class="cta-wave cta-wave--third"
         span class="icon button-icon"
         span text=label

@@ -357,29 +357,26 @@ function external(url) {
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-function setCtaWaveOrigin(button, event) {
+function triggerCtaWaves(button, event, kind) {
   const bounds = button.getBoundingClientRect();
-  button.style.setProperty('--cta-wave-x', `${Math.max(0, Math.min(bounds.width, event.clientX - bounds.left))}px`);
-  button.style.setProperty('--cta-wave-y', `${Math.max(0, Math.min(bounds.height, event.clientY - bounds.top))}px`);
-}
-
-function triggerCtaWaves(button) {
-  button.classList.remove('is-clicking');
-  void button.offsetWidth;
-  button.classList.add('is-clicking');
-}
-
-function triggerCtaHoverWaves(button) {
-  button.classList.remove('is-wave-active');
-  void button.offsetWidth;
-  button.classList.add('is-wave-active');
+  const x = event ? Math.max(0, Math.min(bounds.width, event.clientX - bounds.left)) : bounds.width / 2;
+  const y = event ? Math.max(0, Math.min(bounds.height, event.clientY - bounds.top)) : bounds.height / 2;
+  const delays = kind === 'hover' ? [0, 160, 320] : [0, 150, 300];
+  for (const [index, wave] of ['first', 'second', 'third'].entries()) {
+    const element = document.createElement('span');
+    element.className = `cta-wave cta-wave--${wave} cta-wave--${kind}`;
+    element.setAttribute('aria-hidden', 'true');
+    element.style.left = `${x}px`;
+    element.style.top = `${y}px`;
+    element.style.animationDelay = `${delays[index] / 1000}s`;
+    button.append(element);
+  }
 }
 
 root.addEventListener('pointerover', event => {
   const button = event.target.closest?.('.action-button');
   if (!button || button.contains(event.relatedTarget)) return;
-  setCtaWaveOrigin(button, event);
-  triggerCtaHoverWaves(button);
+  triggerCtaWaves(button, event, 'hover');
   button.dataset.waveX = String(event.clientX);
   button.dataset.waveY = String(event.clientY);
   button.dataset.waveTime = String(performance.now());
@@ -393,8 +390,7 @@ root.addEventListener('pointermove', event => {
   const distance = Math.hypot(event.clientX - lastX, event.clientY - lastY);
   const elapsed = performance.now() - Number(button.dataset.waveTime);
   if (distance < 36 && (distance < 12 || elapsed < 450)) return;
-  setCtaWaveOrigin(button, event);
-  triggerCtaHoverWaves(button);
+  triggerCtaWaves(button, event, 'hover');
   button.dataset.waveX = String(event.clientX);
   button.dataset.waveY = String(event.clientY);
   button.dataset.waveTime = String(performance.now());
@@ -406,28 +402,21 @@ root.addEventListener('pointerout', event => {
   delete button.dataset.waveX;
   delete button.dataset.waveY;
   delete button.dataset.waveTime;
-  button.classList.remove('is-wave-active');
 });
 
 root.addEventListener('pointerdown', event => {
   const button = event.target.closest?.('.action-button');
   if (!button) return;
-  setCtaWaveOrigin(button, event);
-  triggerCtaWaves(button);
+  triggerCtaWaves(button, event, 'click');
 });
 
 root.addEventListener('click', event => {
   const button = event.target.closest?.('.action-button');
-  if (button && event.detail === 0) triggerCtaWaves(button);
+  if (button && event.detail === 0) triggerCtaWaves(button, null, 'click');
 }, true);
 
 root.addEventListener('animationend', event => {
-  if (!event.target.matches?.('.cta-wave--third')) return;
-  const button = event.target.closest('.action-button');
-  if (event.animationName === 'cta-wave-click') button?.classList.remove('is-clicking');
-  if (event.animationName === 'cta-wave-hover') {
-    button?.classList.remove('is-wave-active');
-  }
+  if (event.target.matches?.('.cta-wave')) event.target.remove();
 });
 
 root.addEventListener('click', event => {

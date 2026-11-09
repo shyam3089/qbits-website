@@ -504,9 +504,7 @@ p, h1, h2, h3 {
 
 .action-button > .cta-wave {
   position: absolute;
-  z-index: 1;
-  top: var(--cta-wave-y, 50%);
-  left: var(--cta-wave-x, 50%);
+  z-index: 0;
   width: 42px;
   height: 42px;
   background: radial-gradient(circle, color-mix(in srgb, var(--button-start) 68%, white) 0%, color-mix(in srgb, var(--button-end) 52%, white) 62%, transparent 100%);
@@ -516,28 +514,12 @@ p, h1, h2, h3 {
   transform: translate(-50%, -50%) scale(.35);
 }
 
-.action-button.is-wave-active > .cta-wave {
-  animation: cta-wave-hover 2.4s ease-out 1;
+.action-button > .cta-wave--hover {
+  animation: cta-wave-hover 3.2s ease-out 1;
 }
 
-.action-button.is-wave-active > .cta-wave--second {
-  animation-delay: .16s;
-}
-
-.action-button.is-wave-active > .cta-wave--third {
-  animation-delay: .32s;
-}
-
-.action-button.is-clicking > .cta-wave {
-  animation: cta-wave-click 1.2s ease-out 1;
-}
-
-.action-button.is-clicking > .cta-wave--second {
-  animation-delay: .15s;
-}
-
-.action-button.is-clicking > .cta-wave--third {
-  animation-delay: .3s;
+.action-button > .cta-wave--click {
+  animation: cta-wave-click 1.8s ease-out 1;
 }
 
 @keyframes cta-wave-hover {
