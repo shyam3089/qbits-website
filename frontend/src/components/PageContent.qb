@@ -45,7 +45,7 @@ component PageContent:
                                         span class="code-language" text=section.language
                                         p class="code-source" text=section.code
                                         button class="copy-code":
-                                            span class="fa-solid fa-copy copy-code-icon"
+                                            span class="icon copy-code-icon"
                                             span class="visually-hidden copy-code-label" text="Copy code"
                                 if section.demo != "":
                                     div class="live-demo":
@@ -66,5 +66,5 @@ component PageContent:
                         div class="content-footer":
                             button class="text-button open-npm":
                                 span text="View package on npm"
-                                span class="fa-solid fa-arrow-up-right-from-square external-icon"
+                                span class="icon external-icon"
                             button class="text-button open-admin" text="Site settings"

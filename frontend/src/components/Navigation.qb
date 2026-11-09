@@ -10,5 +10,5 @@ component Navigation(name = "Qbits"):
             button class="nav-item nav-examples" text="Examples"
             button class="nav-item nav-roadmap" text="Roadmap"
         button class="github-button":
-            span class="fa-brands fa-github github-icon"
+            span class="icon github-icon"
             span text="GitHub"

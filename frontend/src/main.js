@@ -2,7 +2,6 @@ import '@fontsource/poppins/latin-300.css';
 import '@fontsource/poppins/latin-400.css';
 import '@fontsource/poppins/latin-500.css';
 import '@fontsource/poppins/latin-600.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import './styles.css';
 import rawTokens from './themes/tokens.css?raw';
 import App from './App.qb';
@@ -51,6 +50,14 @@ function attrs(element, values) {
   for (const [name, value] of Object.entries(values)) element.setAttribute(name, value);
 }
 
+function updateNavIndicator() {
+  const links = root.querySelector('.nav-links');
+  const activeItem = links?.querySelector(".nav-item[aria-current='page']");
+  if (!links || !activeItem) return;
+  links.style.setProperty('--nav-active-x', `${activeItem.offsetLeft}px`);
+  links.style.setProperty('--nav-active-width', `${activeItem.offsetWidth}px`);
+}
+
 function accessibility() {
   attrs(root.querySelector('.navigation'), { role: 'navigation', 'aria-label': 'Main navigation' });
   attrs(root.querySelector('.brand'), { 'aria-label': 'Qbits home' });
@@ -64,6 +71,7 @@ function accessibility() {
   for (const page of routeNames) for (const item of root.querySelectorAll(`.nav-item.nav-${page}`)) {
     if (page === activePage) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
   }
+  updateNavIndicator();
   const password = root.querySelector('.password-input');
   attrs(password, { type: 'password', autocomplete: 'current-password', name: 'password', maxlength: '256' });
   attrs(root.querySelector('.admin-message'), { role: 'status', 'aria-live': 'polite' });
@@ -316,11 +324,11 @@ async function copy(text, button) {
       const label = button.querySelector('.copy-code-label');
       const icon = button.querySelector('.copy-code-icon');
       label.textContent = 'Copied!';
-      icon.classList.replace('fa-copy', 'fa-check');
+      icon.classList.add('is-copied');
       setTimeout(() => {
         if (!button.isConnected) return;
         label.textContent = 'Copy code';
-        icon.classList.replace('fa-check', 'fa-copy');
+        icon.classList.remove('is-copied');
       }, 2000);
     }
     else { app.updateState({ feedback: 'Copied!' }); clearTimeout(feedbackTimer); feedbackTimer = setTimeout(() => app.updateState({ feedback: '' }), 2500); }
@@ -405,5 +413,7 @@ root.addEventListener('keydown', event => {
 window.addEventListener('popstate', () => { void route(pathPage(), false, true); });
 window.addEventListener('pagehide', () => { pageRequest?.abort(); sectionScrollCleanup?.(); clearTimeout(feedbackTimer); observer.disconnect(); quantum.dispose(); frameArt.dispose(); pageView?.(); adminView?.(); app(); }, { once: true });
 accessibility();
+window.addEventListener('resize', updateNavIndicator);
+document.fonts.ready.then(updateNavIndicator);
 void route(pathPage());
 void loadSite();

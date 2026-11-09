@@ -21,6 +21,11 @@ export function mountFrameArt(target) {
     svgNode('stop', { offset: '100%', 'stop-color': 'var(--terminal-end)' }),
   );
   defs.append(terminalGradient);
+  const panelShadowFilter = svgNode('filter', { id: 'panel-shadow', x: '-10%', y: '-10%', width: '120%', height: '120%', 'color-interpolation-filters': 'sRGB' });
+  const panelDropShadow = svgNode('feDropShadow', { dx: '0', 'flood-color': 'var(--panel-shadow-color)', result: 'shadow' });
+  // Keep only the shadow outside the panel so the content and artwork stay clear.
+  panelShadowFilter.append(panelDropShadow, svgNode('feComposite', { in: 'shadow', in2: 'SourceAlpha', operator: 'out' }));
+  defs.append(panelShadowFilter);
   svg.append(defs);
   // One continuous shell surrounds the inset dark surface and both recesses.
   // The inner subpath also masks the wave artwork at the panel's edges.
@@ -28,6 +33,8 @@ export function mountFrameArt(target) {
   svg.append(shell);
   const terminalBackground = svgNode('path', { fill: 'url(#terminal-fill)' });
   svg.append(terminalBackground);
+  const panelShadow = svgNode('path', { class: 'panel-shadow', fill: 'var(--frame-bg)', filter: 'url(#panel-shadow)' });
+  svg.append(panelShadow);
   const githubEdge = svgNode('path', { class: 'structure-edge' });
   const terminalEdge = svgNode('path', { class: 'structure-edge' });
   svg.append(githubEdge, terminalEdge);
@@ -48,6 +55,9 @@ export function mountFrameArt(target) {
     const inner = `M${r} ${s} H${g} C${g+c*ga} ${s} ${g+c*gb} ${d} ${g+c} ${d} H${w-r} Q${w-s} ${d} ${w-s} ${d+ir} V${lower-ir} Q${w-s} ${lower} ${w-r} ${lower} H${tw} C${start+tc*tb} ${lower} ${start+tc*ta} ${ty} ${start} ${ty} H${r} Q${s} ${ty} ${s} ${ty-ir} V${r} A${ir} ${ir} 0 0 1 ${r} ${s} Z`;
     svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
     shell.setAttribute('d', `${outer} ${inner}`);
+    panelShadow.setAttribute('d', inner);
+    panelDropShadow.setAttribute('dy', value('--panel-shadow-offset'));
+    panelDropShadow.setAttribute('stdDeviation', value('--panel-shadow-blur'));
     terminalBackground.setAttribute('d', `M${s} ${ty-ir} Q${s} ${ty} ${r} ${ty} H${start} C${start+tc*ta} ${ty} ${start+tc*tb} ${lower} ${tw} ${lower} H${r} A${ir} ${ir} 0 0 1 ${s} ${lower-ir} Z`);
     githubEdge.setAttribute('d', `M${g} ${s} C${g+c*ga} ${s} ${g+c*gb} ${d} ${g+c} ${d} H${w-r} Q${w-s} ${d} ${w-s} ${d+ir}`);
     terminalEdge.setAttribute('d', `M${s} ${ty-ir} Q${s} ${ty} ${r} ${ty} H${start} C${start+tc*ta} ${ty} ${start+tc*tb} ${lower} ${tw} ${lower}`);

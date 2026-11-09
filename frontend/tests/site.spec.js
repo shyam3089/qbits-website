@@ -104,10 +104,10 @@ test('copy exact install command, copy example, and functional external destinat
   const block = page.locator('.code-block').first();
   const copyButton = block.getByRole('button', { name: 'Copy code' });
   await expect(copyButton).toBeVisible();
-  await expect(copyButton.locator('.copy-code-icon')).toHaveClass(/fa-copy/);
+  await expect(copyButton.locator('.copy-code-icon')).not.toHaveClass(/is-copied/);
   await copyButton.click();
   await expect(block.getByRole('button', { name: 'Copied!' })).toBeVisible();
-  await expect(block.locator('.copy-code-icon')).toHaveClass(/fa-check/);
+  await expect(block.locator('.copy-code-icon')).toHaveClass(/is-copied/);
   expect(await page.evaluate(() => window.copied)).toContain('npm install qbits');
   await page.getByRole('button', { name: 'View package on npm' }).click();
   expect((await page.evaluate(() => window.opened)).url).toBe('https://www.npmjs.com/package/qbits');
