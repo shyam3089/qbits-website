@@ -1,0 +1,14 @@
+component Navigation(name = "Qbits"):
+    div class="navigation":
+        button class="brand nav-home":
+            span class="brand-symbol"
+            span class="brand-wordmark" text="qbits"
+        div class="nav-links":
+            button class="nav-item nav-home" text="Home"
+            button class="nav-item nav-features" text="Features"
+            button class="nav-item nav-docs" text="Docs"
+            button class="nav-item nav-examples" text="Examples"
+            button class="nav-item nav-roadmap" text="Roadmap"
+        button class="github-button":
+            span class="github-icon"
+            span text="GitHub"

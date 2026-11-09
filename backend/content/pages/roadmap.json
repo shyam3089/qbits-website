@@ -1,0 +1,11 @@
+{
+  "slug": "roadmap",
+  "title": "A thoughtful path forward.",
+  "intro": "A clear view of what is available today and what remains experimental. Future work has no promised release dates.",
+  "sections": [
+    {"id": "available", "title": "Available — The core language", "body": "Typed state, component composition, keyed lists, shared state, child events and lifecycle hooks are included in the published 1.0.1 package.", "code": ""},
+    {"id": "tooling", "title": "Available — The development workflow", "body": "The compiler, located diagnostics, CLI checks and Vite integration support local development. This website itself is built with Qbits components and the published package.", "code": ""},
+    {"id": "experimental", "title": "Experimental — Client-side routing", "body": "Static routes, parameters and fallback routes are documented and tested in Qbits. The routing API is experimental and can change outside the stable API guarantee.", "code": ""},
+    {"id": "future", "title": "Looking ahead — Broader capabilities", "body": "Server rendering, nested routing, route guards and editor tooling are currently unsupported. Follow the project on GitHub for proposals and release notes.", "code": ""}
+  ]
+}

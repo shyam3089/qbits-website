@@ -1,0 +1,34 @@
+class ContentSection:
+    id = ""
+    title = ""
+    body = ""
+    code = ""
+
+component PageContent:
+    title = ""
+    intro = ""
+    loading = true
+    error = ""
+    sections = [] as ContentSection
+    div class="page-content":
+        if loading:
+            p class="loading-state" text="Loading…"
+        else:
+            if error != "":
+                h1 text="A small interruption."
+                p class="error-state" text=error
+                button class="small-button retry-page" text="Try again"
+            else:
+                h1 class="content-title" text=title
+                p class="content-intro" text=intro
+                for section in sections key=section.id:
+                    section class="content-section":
+                        h2 text=section.title
+                        p text=section.body
+                        if section.code != "":
+                            div class="code-block":
+                                p text=section.code
+                                button class="copy-code" text="Copy code"
+                div class="content-footer":
+                    button class="text-button open-npm" text="View package on npm ↗"
+                    button class="text-button open-admin" text="Site settings"

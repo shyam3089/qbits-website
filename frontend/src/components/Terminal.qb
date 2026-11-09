@@ -1,0 +1,11 @@
+component Terminal(prefix = "npm", remainder = " install qbits", feedback = ""):
+    div class="terminal":
+        button class="terminal-command":
+            span class="terminal-prompt" text=">"
+            span class="terminal-divider"
+            span class="command-text":
+                span class="command-prefix" text=prefix
+                span text=remainder
+            span class="terminal-cursor"
+            span class="terminal-copy-icon"
+        span class="copy-feedback" text=feedback

@@ -1,0 +1,11 @@
+{
+  "slug": "examples",
+  "title": "Ideas, in a few lines.",
+  "intro": "Small, working patterns using the syntax supported by Qbits 1.0.1.",
+  "sections": [
+    {"id": "counter", "title": "A reactive counter", "body": "State belongs to the component instance. Click to update it; only dependent bindings need to change.", "code": "component Counter:\n    count = 0\n    button text=\"Count: \" + str(count):\n        on click:\n            count = count + 1"},
+    {"id": "input", "title": "A personal greeting", "body": "Bind an input to a typed string. Qbits keeps the input and its focus in place while updating the greeting.", "code": "component Greeting:\n    name = \"\"\n    section:\n        input:\n            value=name\n            on input:\n                name = event.value\n        p text=\"Hello, \" + name"},
+    {"id": "condition", "title": "Show what matters", "body": "Use a boolean condition to choose a branch. Qbits handles preparation and disposal of the resulting interface.", "code": "component Details:\n    expanded = false\n    section:\n        button text=\"Show details\":\n            on click:\n                expanded = true\n        if expanded:\n            p text=\"Less code. More possibility.\""},
+    {"id": "events", "title": "Connect components", "body": "Typed child events let a parent respond to a child's intent. A named event can carry one string, number or boolean value.", "code": "component SaveButton:\n    button text=\"Save\":\n        on click:\n            emit saved(\"Ready\")"}
+  ]
+}

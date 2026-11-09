@@ -1,0 +1,4 @@
+component ActionButton(label = ""):
+    button class="action-button":
+        span class="button-icon"
+        span text=label

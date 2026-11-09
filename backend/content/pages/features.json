@@ -1,0 +1,11 @@
+{
+  "slug": "features",
+  "title": "Small syntax. Real possibilities.",
+  "intro": "A focused language for building reactive interfaces, with less between you and your idea.",
+  "sections": [
+    {"id": "syntax", "title": "Familiar from the first line", "body": "Indentation defines your interface. Typed state and simple expressions keep the relationship between your data and your UI clear.", "code": "component Counter:\n    count = 0\n    button text=\"Count: \" + str(count):\n        on click:\n            count = count + 1"},
+    {"id": "reactivity", "title": "Reactive by design", "body": "Updates follow their dependencies. Qbits preserves input focus, selection and keyed element identity, and rolls back failed structural preparation.", "code": ""},
+    {"id": "components", "title": "Compose your interface", "body": "Build small .qb components with typed props, an unnamed slot and typed child events. Import ordinary CSS and use the Vite integration for development.", "code": "import Panel from \"./Panel.qb\"\n\ncomponent App:\n    Panel title=\"Hello, Qbits\":\n        p text=\"Make something great.\""},
+    {"id": "honest", "title": "A deliberately focused foundation", "body": "Qbits 1.0.1 supports typed state, classes, lists, lifecycle hooks and shared state. Browser APIs use a trusted JavaScript adapter. Routing is experimental; server rendering and nested routing are not supported.", "code": ""}
+  ]
+}

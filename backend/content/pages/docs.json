@@ -1,0 +1,12 @@
+{
+  "slug": "docs",
+  "title": "A little code. A good place to start.",
+  "intro": "Start with Node.js 22 or newer. Install Qbits, create a component, and connect it to Vite.",
+  "sections": [
+    {"id": "installation", "title": "01 — Install Qbits", "body": "In an existing npm project, install the published package. Add Vite as a development dependency if your project does not already use it.", "code": "npm install qbits\nnpm install --save-dev vite"},
+    {"id": "first-component", "title": "02 — Write your first .qb component", "body": "Create src/App.qb. Declare state before the interface. Text expressions are safe text nodes, and numeric values use str() when combined with a string.", "code": "component App:\n    count = 0\n    button text=\"Count: \" + str(count):\n        on click:\n            count = count + 1"},
+    {"id": "vite", "title": "03 — Connect the compiler", "body": "Create vite.config.js using the published plugin. Your index.html should contain a root element and load src/main.js as a module.", "code": "import { defineConfig } from 'vite';\nimport { languagePlugin } from 'qbits/vite';\n\nexport default defineConfig({\n  plugins: [languagePlugin()]\n});"},
+    {"id": "mount", "title": "04 — Mount your interface", "body": "In src/main.js, import the component and the matching runtime. The mount returns a disposer; call it when your host removes the interface.", "code": "import App from './App.qb';\nimport * as runtime from 'qbits/runtime';\n\nconst dispose = App(\n  document.getElementById('app'), runtime\n);"},
+    {"id": "styling", "title": "05 — Make it yours", "body": "Import a relative .css file from a component and assign static classes. CSS custom properties let you share a theme across your interface without changing component code.", "code": "import \"./app.css\"\n\ncomponent App:\n    main class=\"app\":\n        h1 text=\"Hello, Qbits\""}
+  ]
+}

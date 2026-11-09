@@ -1,0 +1,31 @@
+import Frame from "./components/Frame.qb"
+import Navigation from "./components/Navigation.qb"
+import Hero from "./components/Hero.qb"
+import Terminal from "./components/Terminal.qb"
+import QuantumBackground from "./components/QuantumBackground.qb"
+
+component App:
+    page = "home"
+    name = "Qbits"
+    eyebrow = "A MODERN UI FRAMEWORK"
+    headline = "Build modern apps with"
+    highlight = "less code"
+    description = "Python-like simple syntax. Reactive by design."
+    second = "Component-based. Built for the modern world."
+    prefix = "npm"
+    remainder = " install qbits"
+    feedback = ""
+    notice = ""
+    Frame:
+        button class="skip-content" text="Skip to content"
+        QuantumBackground
+        Navigation name=name
+        main class="view-container":
+            if page == "home":
+                Hero eyebrow=eyebrow headline=headline highlight=highlight description=description second=second
+            else:
+                div class="inner-view"
+        Terminal prefix=prefix remainder=remainder feedback=feedback
+        p class="site-notice" text=notice
+        if notice != "":
+            button class="retry-site" text="Retry connection"

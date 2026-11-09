@@ -1,0 +1,17 @@
+import ActionButton from "./ActionButton.qb"
+
+component Hero(eyebrow = "", headline = "", highlight = "", description = "", second = ""):
+    section class="hero":
+        div class="hero-eyebrow":
+            span class="hero-symbol"
+            span text=eyebrow
+            span class="eyebrow-line"
+        h1 class="headline":
+            span text=headline + " "
+            span class="headline-highlight" text=highlight
+        p class="hero-description":
+            span text=description
+            span text=second
+        div class="hero-actions":
+            ActionButton class="button-install" label="Install qbits"
+            ActionButton class="button-docs" label="Documentation"
