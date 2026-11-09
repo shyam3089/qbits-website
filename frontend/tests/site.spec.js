@@ -17,6 +17,10 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
     const filled = (x, y) => shell.isPointInFill(new DOMPoint(x, y));
     return {
       frame: rect('.site-frame'), brand: rect('.brand'), github: rect('.github-button'), heroContent: rect('.hero-eyebrow'), actions: rect('.hero-actions'),
+      headline: (() => {
+        const element = document.querySelector('.headline');
+        return { width: element.clientWidth, scrollWidth: element.scrollWidth, whiteSpace: getComputedStyle(element).whiteSpace };
+      })(),
       shell: {
         fill: getComputedStyle(shell).fill,
         outerEdges: [filled(width / 4, 8), filled(8, height / 2), filled(width - 8, height / 2), filled(width * .75, height - 8)],
@@ -30,7 +34,8 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
   expect(layout.frame).toEqual({ x: 44, y: 20, width: 1166, height: 723 });
   expect(Math.abs((layout.brand.x - layout.frame.x) - ((layout.frame.x + layout.frame.width) - (layout.github.x + layout.github.width)))).toBeLessThan(1);
   expect(layout.heroContent.x).toBe(122);
-  expect(Math.abs(layout.actions.y - 467)).toBeLessThan(5);
+  expect(layout.headline.whiteSpace).toBe('nowrap');
+  expect(layout.headline.scrollWidth).toBeLessThanOrEqual(layout.headline.width);
   expect(layout.shell.fill).not.toBe('none');
   expect(layout.shell.outerEdges).toEqual([false, false, false, false]);
   expect(layout.shell.panel).toEqual([false, false, false, false, false]);
@@ -61,6 +66,22 @@ test('short desktop keeps both hero buttons fully visible', async ({ page }) => 
     expect(button.bottom).toBeLessThanOrEqual(layout.viewport.bottom);
   }
   await page.screenshot({ path: '../artifacts/short-desktop.png', animations: 'disabled' });
+});
+
+test('hero headline stays on one line and auto-fits after viewport changes', async ({ page }) => {
+  await page.goto('/'); await ready(page);
+  for (const width of [1254, 850, 390]) {
+    await page.setViewportSize({ width, height: 775 });
+    const headline = page.locator('.headline');
+    await expect(headline).toBeVisible();
+    const fit = await headline.evaluate(element => ({
+      width: element.clientWidth,
+      contentWidth: element.scrollWidth,
+      whiteSpace: getComputedStyle(element).whiteSpace,
+    }));
+    expect(fit.whiteSpace).toBe('nowrap');
+    expect(fit.contentWidth).toBeLessThanOrEqual(fit.width);
+  }
 });
 
 test('navigation, history, direct URLs and both hero CTAs', async ({ page }) => {

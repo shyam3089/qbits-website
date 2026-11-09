@@ -58,6 +58,19 @@ function updateNavIndicator() {
   links.style.setProperty('--nav-active-width', `${activeItem.offsetWidth}px`);
 }
 
+function fitHeroHeadline() {
+  const headline = root.querySelector('.headline');
+  if (!headline) return;
+  const baseSize = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--headline-size'));
+  if (!Number.isFinite(baseSize) || headline.clientWidth === 0) return;
+  headline.style.fontSize = `${baseSize}px`;
+  let size = baseSize;
+  for (let attempt = 0; attempt < 12 && headline.scrollWidth > headline.clientWidth; attempt += 1) {
+    size *= headline.clientWidth / headline.scrollWidth * 0.99;
+    headline.style.fontSize = `${size}px`;
+  }
+}
+
 function accessibility() {
   attrs(root.querySelector('.navigation'), { role: 'navigation', 'aria-label': 'Main navigation' });
   attrs(root.querySelector('.brand'), { 'aria-label': 'Qbits home' });
@@ -73,6 +86,7 @@ function accessibility() {
     if (page === activePage) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
   }
   updateNavIndicator();
+  fitHeroHeadline();
   const password = root.querySelector('.password-input');
   attrs(password, { type: 'password', autocomplete: 'current-password', name: 'password', maxlength: '256' });
   attrs(root.querySelector('.admin-message'), { role: 'status', 'aria-live': 'polite' });
@@ -415,6 +429,7 @@ window.addEventListener('popstate', () => { void route(pathPage(), false, true);
 window.addEventListener('pagehide', () => { pageRequest?.abort(); sectionScrollCleanup?.(); clearTimeout(feedbackTimer); observer.disconnect(); quantum.dispose(); frameArt.dispose(); pageView?.(); adminView?.(); app(); }, { once: true });
 accessibility();
 window.addEventListener('resize', updateNavIndicator);
-document.fonts.ready.then(updateNavIndicator);
+window.addEventListener('resize', fitHeroHeadline);
+document.fonts.ready.then(() => { updateNavIndicator(); fitHeroHeadline(); });
 void route(pathPage());
 void loadSite();

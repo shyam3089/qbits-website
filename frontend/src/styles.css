@@ -300,6 +300,7 @@ p, h1, h2, h3 {
   justify-items: start;
   align-items: center;
   min-width: 0;
+  transform: translateX(-24px);
 }
 
 .hero-art::after {
@@ -311,7 +312,7 @@ p, h1, h2, h3 {
   width: clamp(220px, 25vw, 310px);
   height: 25px;
   border-radius: 50%;
-  background: radial-gradient(circle,rgba(201, 0, 171, 1) 0%, rgba(235, 90, 235, 1) 17%, rgba(245, 176, 240, 0) 65%);
+  background: radial-gradient(circle,rgba(201, 0, 171, 1) 0%, rgba(220, 50, 206, 0.94) 18%, rgba(235, 90, 235, 0.21) 69%, rgba(245, 176, 240, 0) 100%);
   filter: blur(12px);
 }
 
@@ -420,16 +421,17 @@ p, h1, h2, h3 {
 }
 
 .headline {
+  width: 100%;
   margin-top: var(--headline-margin-top);
   max-width: var(--headline-max-width);
   font-size: var(--headline-size);
   font-weight: var(--headline-weight);
   letter-spacing: var(--headline-tracking);
   line-height: var(--headline-leading);
+  white-space: nowrap;
 }
 
 .headline-highlight {
-  display: block;
   background: var(--headline-gradient);
   background-clip: text;
   color: transparent;
