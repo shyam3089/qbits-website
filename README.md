@@ -55,7 +55,7 @@ Open **http://127.0.0.1:8108**. FastAPI serves the built frontend, hashed assets
 ## Structure and content
 
 - `frontend/src/components/`: Qbits frame, navigation, hero, buttons, terminal, particle surface, content and admin components.
-- `frontend/src/themes/tokens.css`: colours, gradients, fonts, dimensions, corner curves, responsive overrides, shadows and motion tokens; three theme variants.
+- `frontend/src/themes/tokens.css`: colours, gradients, fonts, dimensions, corner curves, responsive overrides, shadows and motion tokens; four theme variants.
 - The same `tokens.css` owns breakpoint values and artwork geometry. Vite expands the named media conditions from its `--breakpoint-*` tokens because CSS custom properties cannot be used directly in media query conditions. Breakpoint changes require rebuilding; other tokens can be managed in admin.
 - `frontend/src/styles.css`: component styles consuming the theme tokens.
 - `frontend/src/platform/visuals.js`: decorative SVG frame and cached canvas particle field. The animation reuses a bitmap, caps pixel ratio and frame rate, pauses in hidden tabs and honours reduced motion.

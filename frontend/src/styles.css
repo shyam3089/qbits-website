@@ -15,9 +15,7 @@ p, h1, h2, h3 { margin: 0; }
 .site-frame { position: relative; isolation: isolate; width: 100%; max-width: var(--frame-max-width); height: calc(100svh - var(--page-top) - var(--page-bottom)); min-height: min(var(--frame-min-height), calc(100svh - var(--page-top) - var(--page-bottom))); border-radius: var(--frame-radius); background: var(--frame-bg); box-shadow: var(--frame-shadow); overflow: hidden; }
 .frame-art { position: absolute; z-index: 3; inset: 0; pointer-events: none; }
 .frame-art svg { width: 100%; height: 100%; overflow: visible; }
-.frame-outline { fill: none; stroke: var(--border); stroke-width: var(--frame-stroke); }
-.inset-edge { fill: none; stroke: var(--inset-line); stroke-width: var(--curve-stroke); }
-.terminal-edge { fill: none; stroke: url(#terminal-line); stroke-width: var(--curve-stroke); }
+.structure-edge { fill: none; stroke: var(--structure-line); stroke-width: var(--structure-stroke); }
 .quantum-background { position: absolute; inset: 0; z-index: -1; opacity: var(--wave-opacity); pointer-events: none; mask-image: var(--wave-feather); transition: opacity var(--transition-duration) var(--transition-ease); }
 .quantum-background canvas { display: block; width: 100%; height: 100%; }
 .site-frame[data-page]:not([data-page='home']) .quantum-background { opacity: var(--wave-content-opacity); }
@@ -100,6 +98,10 @@ input:focus { border-color: var(--accent); box-shadow: var(--field-focus); }
 .admin-message:not(:empty) { padding-block: var(--admin-label-gap); }
 .admin-message[data-error='true'] { color: var(--error); }
 @keyframes blink { 0%, 65% { opacity: 1; } 66%, 100% { opacity: 0; } }
+
+@media (--above-mobile) and (max-height: 720px) {
+  :root { --hero-top: 140px; --headline-margin-top: 22px; --actions-margin-top: 28px; }
+}
 
 @media (--tablet) {
   .headline { max-width: var(--headline-max-width); }

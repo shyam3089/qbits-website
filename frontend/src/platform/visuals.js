@@ -9,42 +9,48 @@ const svgNode = (tag, attributes) => {
 export function mountFrameArt(target) {
   const svg = svgNode('svg', { preserveAspectRatio: 'none', 'aria-hidden': 'true' });
   const defs = svgNode('defs', {});
-  for (const [id, stops, direction] of [
-    ['github-fill', [['0%', 'var(--inset-start)'], ['100%', 'var(--inset-end)']], { x2: '100%', y2: '60%' }],
-    ['terminal-fill', [['0%', 'var(--terminal-start)'], ['100%', 'var(--terminal-end)']], { x2: '0%', y2: '100%' }],
-    ['terminal-line', [['0%', 'var(--violet)'], ['50%', 'var(--cyan)'], ['100%', 'var(--blue)']], { x2: '100%', y2: '0%' }],
-  ]) {
-    const gradient = svgNode('linearGradient', { id, ...direction });
-    for (const [offset, color] of stops) gradient.append(svgNode('stop', { offset, 'stop-color': color }));
-    defs.append(gradient);
-  }
+  const gradient = svgNode('linearGradient', { id: 'frame-shell', x2: '100%', y2: '100%' });
+  gradient.append(
+    svgNode('stop', { offset: '0%', 'stop-color': 'var(--inset-start)' }),
+    svgNode('stop', { offset: '100%', 'stop-color': 'var(--inset-end)' }),
+  );
+  defs.append(gradient);
+  const terminalGradient = svgNode('linearGradient', { id: 'terminal-fill', x2: '0%', y2: '100%' });
+  terminalGradient.append(
+    svgNode('stop', { offset: '0%', 'stop-color': 'var(--terminal-start)' }),
+    svgNode('stop', { offset: '100%', 'stop-color': 'var(--terminal-end)' }),
+  );
+  defs.append(terminalGradient);
   svg.append(defs);
-  const paths = [
-    svgNode('path', { fill: 'url(#github-fill)' }), svgNode('path', { class: 'inset-edge' }),
-    svgNode('path', { fill: 'url(#terminal-fill)' }), svgNode('path', { class: 'terminal-edge' }),
-    svgNode('path', { class: 'frame-outline' }),
-  ];
-  svg.append(...paths);
+  // One continuous shell surrounds the inset dark surface and both recesses.
+  // The inner subpath also masks the wave artwork at the panel's edges.
+  const shell = svgNode('path', { class: 'frame-shell', fill: 'url(#frame-shell)', 'fill-rule': 'evenodd' });
+  svg.append(shell);
+  const terminalBackground = svgNode('path', { fill: 'url(#terminal-fill)' });
+  svg.append(terminalBackground);
+  const githubEdge = svgNode('path', { class: 'structure-edge' });
+  const terminalEdge = svgNode('path', { class: 'structure-edge' });
+  svg.append(githubEdge, terminalEdge);
   target.append(svg);
   function refresh() {
     const css = getComputedStyle(document.documentElement);
     const value = token => Number.parseFloat(css.getPropertyValue(token));
     const { width: w, height: h } = target.getBoundingClientRect();
-    const r = value('--frame-radius'), s = value('--frame-outline-inset');
+    const r = value('--frame-radius'), s = value('--frame-inset'), ir = r - s;
     const g = Math.max(r, w - value('--github-inset-width'));
     const d = value('--github-inset-depth'), c = value('--github-curve-width');
-    const ty = h - value('--terminal-inset-height'), lower = h - value('--terminal-lower-gap');
+    const ty = h - value('--terminal-inset-height'), lower = h - s;
     const tw = Math.min(value('--terminal-inset-width'), w * value('--terminal-width-limit'));
     const tc = Math.min(value('--terminal-curve-width'), w * value('--terminal-curve-limit')), start = tw - tc;
     const ga = value('--github-curve-control-a'), gb = value('--github-curve-control-b');
     const ta = value('--terminal-curve-control-a'), tb = value('--terminal-curve-control-b');
-    const outer = `M${r} ${s} H${w-r} Q${w-s} ${s} ${w-s} ${r} V${h-r} Q${w-s} ${h-s} ${w-r} ${h-s} H${r} Q${s} ${h-s} ${s} ${h-r} V${r} Q${s} ${s} ${r} ${s} Z`;
-    const githubEdge = `M${g} ${s} C${g+c*ga} ${s} ${g+c*gb} ${d} ${g+c} ${d} H${w-r} Q${w-s} ${d} ${w-s} ${d+r}`;
-    const github = `M${g} ${s} H${w-r} Q${w-s} ${s} ${w-s} ${r} V${d+r} Q${w-s} ${d} ${w-r} ${d} H${g+c} C${g+c*gb} ${d} ${g+c*ga} ${s} ${g} ${s} Z`;
-    const terminalEdge = `M${s} ${ty-r} Q${s} ${ty} ${r} ${ty} H${start} C${start+tc*ta} ${ty} ${start+tc*tb} ${lower} ${tw} ${lower} H${w-r} Q${w-s} ${lower} ${w-s} ${lower-r}`;
-    const terminal = terminalEdge + ` V${h-r} Q${w-s} ${h-s} ${w-r} ${h-s} H${r} Q${s} ${h-s} ${s} ${h-r} Z`;
+    const outer = `M${r} 0 H${w-r} A${r} ${r} 0 0 1 ${w} ${r} V${h-r} A${r} ${r} 0 0 1 ${w-r} ${h} H${r} A${r} ${r} 0 0 1 0 ${h-r} V${r} A${r} ${r} 0 0 1 ${r} 0 Z`;
+    const inner = `M${r} ${s} H${g} C${g+c*ga} ${s} ${g+c*gb} ${d} ${g+c} ${d} H${w-r} Q${w-s} ${d} ${w-s} ${d+ir} V${lower-ir} Q${w-s} ${lower} ${w-r} ${lower} H${tw} C${start+tc*tb} ${lower} ${start+tc*ta} ${ty} ${start} ${ty} H${r} Q${s} ${ty} ${s} ${ty-ir} V${r} A${ir} ${ir} 0 0 1 ${r} ${s} Z`;
     svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    [github, githubEdge, terminal, terminalEdge, outer].forEach((d, i) => paths[i].setAttribute('d', d));
+    shell.setAttribute('d', `${outer} ${inner}`);
+    terminalBackground.setAttribute('d', `M${s} ${ty-ir} Q${s} ${ty} ${r} ${ty} H${start} C${start+tc*ta} ${ty} ${start+tc*tb} ${lower} ${tw} ${lower} H${r} A${ir} ${ir} 0 0 1 ${s} ${lower-ir} Z`);
+    githubEdge.setAttribute('d', `M${g} ${s} C${g+c*ga} ${s} ${g+c*gb} ${d} ${g+c} ${d} H${w-r} Q${w-s} ${d} ${w-s} ${d+ir}`);
+    terminalEdge.setAttribute('d', `M${s} ${ty-ir} Q${s} ${ty} ${r} ${ty} H${start} C${start+tc*ta} ${ty} ${start+tc*tb} ${lower} ${tw} ${lower}`);
   }
   const resize = new ResizeObserver(refresh);
   resize.observe(target); refresh();

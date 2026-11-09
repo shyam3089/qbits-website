@@ -5,22 +5,22 @@ import { readFileSync } from 'node:fs';
 // Native CSS variables cannot be used in media conditions. Expand the same
 // centrally configured breakpoint tokens for both development and production.
 const themeBreakpoints = {
-  name: 'qbits-theme-breakpoints',
-  enforce: 'pre',
-  transform(source, id) {
-    if (!id.endsWith('.css')) return;
-    const tokens = readFileSync(new URL('./src/themes/tokens.css', import.meta.url), 'utf8');
-    return source.replace(/@media\s*\(--(tablet|mobile|compact)\)/g,
-      (_, name) => {
+  postcssPlugin: 'qbits-theme-breakpoints',
+  AtRule: {
+    media(rule) {
+      const tokens = readFileSync(new URL('./src/themes/tokens.css', import.meta.url), 'utf8');
+      rule.params = rule.params.replace(/\(--(above-)?(tablet|mobile|compact)\)/g, (_, above, name) => {
         const value = tokens.match(new RegExp(`--breakpoint-${name}:\\s*([^;]+);`))?.[1];
         if (!value) throw new Error(`Missing breakpoint token: ${name}`);
-        return `@media (max-width: ${value})`;
+        return above ? `(width > ${value})` : `(max-width: ${value})`;
       });
+    },
   },
 };
 
 export default defineConfig({
-  plugins: [themeBreakpoints, languagePlugin()],
+  plugins: [languagePlugin()],
+  css: { postcss: { plugins: [themeBreakpoints] } },
   server: {
     port: 5188,
     strictPort: true,

@@ -8,6 +8,6 @@
   "github_url": "https://github.com/shyam3089/qubits",
   "npm_url": "https://www.npmjs.com/package/qbits",
   "install_command": "npm install qbits",
-  "theme": "neon",
+  "theme": "apple",
   "tokens": {}
 }

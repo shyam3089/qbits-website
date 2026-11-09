@@ -14,7 +14,7 @@ component Admin:
     message = ""
     settings = [] as Setting
     tokens = [] as ThemeToken
-    theme = "neon"
+    theme = "apple"
     div class="admin-panel":
         div class="admin-heading":
             div:
@@ -51,6 +51,7 @@ component Admin:
                     button class="small-button theme-neon" text="Neon"
                     button class="small-button theme-ultraviolet" text="Ultraviolet"
                     button class="small-button theme-midnight" text="Midnight"
+                    button class="small-button theme-apple" text="Apple Light"
                 p class="current-theme" text="Selected: " + theme
                 div class="token-toolbar":
                     h3 text="Theme tokens"

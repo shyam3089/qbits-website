@@ -12,13 +12,54 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
   await expect(page.getByRole('img', { name: 'Qbits symbol' })).toBeVisible();
   const layout = await page.evaluate(() => {
     const rect = selector => { const { x, y, width, height } = document.querySelector(selector).getBoundingClientRect(); return { x, y, width, height }; };
-    return { frame: rect('.site-frame'), hero: rect('.hero'), actions: rect('.hero-actions'), paths: document.querySelectorAll('.frame-art path').length, scroll: document.documentElement.scrollWidth > innerWidth };
+    const shell = document.querySelector('.frame-shell');
+    const { width, height } = shell.ownerSVGElement.viewBox.baseVal;
+    const filled = (x, y) => shell.isPointInFill(new DOMPoint(x, y));
+    return {
+      frame: rect('.site-frame'), hero: rect('.hero'), actions: rect('.hero-actions'),
+      shell: {
+        fill: getComputedStyle(shell).fill,
+        outerEdges: [filled(width / 4, 8), filled(8, height / 2), filled(width - 8, height / 2), filled(width * .75, height - 8)],
+        panel: [filled(width / 4, 24), filled(24, height / 2), filled(width - 24, height / 2), filled(width * .75, height - 24), filled(width / 2, height / 2)],
+        recesses: [filled(width - 100, 50), filled(120, height - 45)],
+        besideRecesses: [filled(width - 100, 125), filled(120, height - 100), filled(width - 100, height - 45)],
+      },
+      scroll: document.documentElement.scrollWidth > innerWidth,
+    };
   });
   expect(layout.frame).toEqual({ x: 44, y: 20, width: 1166, height: 723 });
   expect(layout.hero.x).toBe(122);
   expect(Math.abs(layout.actions.y - 467)).toBeLessThan(5);
-  expect(layout.paths).toBe(5); expect(layout.scroll).toBe(false); expect(errors).toEqual([]);
+  expect(layout.shell.fill).not.toBe('none');
+  expect(layout.shell.outerEdges).toEqual([false, false, false, false]);
+  expect(layout.shell.panel).toEqual([false, false, false, false, false]);
+  expect(layout.shell.recesses).toEqual([true, true]);
+  expect(layout.shell.besideRecesses).toEqual([false, false, false]);
+  expect(layout.scroll).toBe(false); expect(errors).toEqual([]);
   await page.screenshot({ path: '../artifacts/desktop.png', animations: 'disabled' });
+});
+
+test('short desktop keeps both hero buttons fully visible', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 650 });
+  await page.goto('/'); await ready(page);
+  const layout = await page.locator('.hero').evaluate(hero => {
+    const { top, right, bottom, left } = hero.getBoundingClientRect();
+    return {
+      viewport: { top, right, bottom, left },
+      buttons: [...hero.querySelectorAll('.action-button')].map(button => {
+        const { top, right, bottom, left } = button.getBoundingClientRect();
+        return { top, right, bottom, left };
+      }),
+    };
+  });
+  expect(layout.buttons).toHaveLength(2);
+  for (const button of layout.buttons) {
+    expect(button.top).toBeGreaterThanOrEqual(layout.viewport.top);
+    expect(button.left).toBeGreaterThanOrEqual(layout.viewport.left);
+    expect(button.right).toBeLessThanOrEqual(layout.viewport.right);
+    expect(button.bottom).toBeLessThanOrEqual(layout.viewport.bottom);
+  }
+  await page.screenshot({ path: '../artifacts/short-desktop.png', animations: 'disabled' });
 });
 
 test('navigation, history, direct URLs and both hero CTAs', async ({ page }) => {
@@ -150,6 +191,9 @@ test('admin authentication, persistence, theme preview, validation and logout', 
     await expect(page.locator('.admin-message')).toContainText('HTTPS');
     await page.getByLabel('GitHub URL', { exact: true }).fill('https://github.com/shyam3089/qubits/issues');
     await page.getByLabel('npm package URL', { exact: true }).fill('https://www.npmjs.com/package/qbits?activeTab=readme');
+    await page.getByRole('button', { name: 'Apple Light', exact: true }).click();
+    await page.getByRole('button', { name: 'Preview theme', exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'apple');
     await page.getByRole('button', { name: 'Midnight', exact: true }).click();
     await page.getByLabel('--accent', { exact: true }).fill('#88ddff');
     await page.getByRole('button', { name: 'Preview theme', exact: true }).click();

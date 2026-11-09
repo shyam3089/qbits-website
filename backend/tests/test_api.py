@@ -61,7 +61,7 @@ def test_file_persistence_across_app_restarts(tmp_path):
     with TestClient(create_app(tmp_path, "test-only-password")) as client:
         headers = login(client)
         body = client.get("/api/site").json()
-        body.update(theme="midnight", github_url="https://github.com/shyam3089/qubits/issues", tokens={"--accent": "#88ccff", "--headline-size": "44px"})
+        body.update(theme="apple", github_url="https://github.com/shyam3089/qubits/issues", tokens={"--accent": "#88ccff", "--headline-size": "44px"})
         assert client.put("/api/admin/site", json=body, headers=headers).status_code == 200
     with TestClient(create_app(tmp_path, "test-only-password")) as restarted:
         assert restarted.get("/api/site").json() == body

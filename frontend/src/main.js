@@ -19,10 +19,10 @@ const frame = root.querySelector('.site-frame');
 const frameArt = mountFrameArt(root.querySelector('.frame-art'));
 const quantum = mountQuantum(root.querySelector('.quantum-background'));
 const routeNames = new Set(['home', 'features', 'docs', 'examples', 'roadmap', 'admin']);
-const themeNames = ['neon', 'ultraviolet', 'midnight'];
+const themeNames = ['neon', 'ultraviolet', 'midnight', 'apple'];
 let config = null, pageView = null, adminView = null, csrf = '', pageRequest = null;
 let activePage = 'home', requestVersion = 0, feedbackTimer, adminVersion = 0;
-let selectedTheme = 'neon', appliedKeys = [], previewing = false;
+let selectedTheme = 'apple', appliedKeys = [], previewing = false;
 
 const tokenNames = [...rawTokens.split(":root[data-theme=")[0].matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)]
   .filter(([, key, value]) => !value.includes('url(') && !key.startsWith('--icon-') && !key.startsWith('--breakpoint-'))
@@ -33,7 +33,7 @@ for (const theme of themeNames) {
   const computed = getComputedStyle(document.documentElement);
   defaults[theme] = Object.fromEntries(tokenNames.map(name => [name, computed.getPropertyValue(name).trim()]));
 }
-document.documentElement.dataset.theme = 'neon';
+document.documentElement.dataset.theme = 'apple';
 
 const settingsLabels = {
   name: 'Site name', eyebrow: 'Eyebrow', headline: 'Headline', highlight: 'Headline highlight',

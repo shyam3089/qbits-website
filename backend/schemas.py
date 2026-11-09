@@ -16,7 +16,7 @@ class SiteConfig(BaseModel):
     github_url: str = "https://github.com/shyam3089/qubits"
     npm_url: str = "https://www.npmjs.com/package/qbits"
     install_command: str = Field(default="npm install qbits", min_length=1, max_length=120)
-    theme: Literal["neon", "ultraviolet", "midnight"] = "neon"
+    theme: Literal["neon", "ultraviolet", "midnight", "apple"] = "apple"
     tokens: dict[str, str] = Field(default_factory=dict, max_length=256)
 
     @field_validator("github_url", "npm_url")
