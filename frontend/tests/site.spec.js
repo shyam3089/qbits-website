@@ -84,6 +84,42 @@ test('hero headline stays on one line and auto-fits after viewport changes', asy
   }
 });
 
+test('CTA waves follow the pointer and burst on click', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/'); await ready(page);
+  const cta = page.getByRole('button', { name: 'Documentation', exact: true });
+  const bounds = await cta.boundingBox();
+  const x = bounds.x + bounds.width * .28;
+  const y = bounds.y + bounds.height * .7;
+  await page.mouse.move(x, y);
+  await expect(cta.locator('.cta-wave--first')).toHaveCSS('animation-name', 'cta-wave-hover');
+  await expect(cta.locator('.cta-wave--first')).toHaveCSS('animation-delay', '0s');
+  await expect(cta.locator('.cta-wave--second')).toHaveCSS('animation-delay', '0.16s');
+  await expect(cta.locator('.cta-wave--third')).toHaveCSS('animation-delay', '0.32s');
+  await expect(cta.locator('.cta-wave--first')).toHaveCSS('animation-duration', '2.4s');
+  await expect(cta.locator('.cta-wave--first')).toHaveCSS('width', '42px');
+  await expect(cta.locator('.cta-wave--first')).toHaveCSS('animation-iteration-count', '1');
+  await expect(cta.locator('.cta-wave--first')).toHaveCSS('border-top-width', '0px');
+  await expect(cta.locator('.cta-wave--first')).not.toHaveCSS('background-image', 'none');
+  await expect(cta).not.toHaveClass(/is-clicking/);
+  const flash = await cta.evaluate(button => getComputedStyle(button, '::after').animationName);
+  expect(flash).toBe('none');
+  const origin = await cta.evaluate(button => ({
+    x: button.style.getPropertyValue('--cta-wave-x'),
+    y: button.style.getPropertyValue('--cta-wave-y'),
+  }));
+  expect(Math.abs(Number.parseFloat(origin.x) - bounds.width * .28)).toBeLessThan(1);
+  expect(Math.abs(Number.parseFloat(origin.y) - bounds.height * .7)).toBeLessThan(1);
+  await page.mouse.move(x + 8, y);
+  await expect.poll(() => cta.evaluate(button => button.style.getPropertyValue('--cta-wave-x'))).toBe(origin.x);
+  await page.mouse.move(x + 40, y);
+  await expect.poll(() => cta.evaluate(button => button.style.getPropertyValue('--cta-wave-x'))).not.toBe(origin.x);
+  await page.mouse.down();
+  await expect(cta).toHaveClass(/is-clicking/);
+  await expect(cta.locator('.cta-wave--first')).toHaveCSS('animation-name', 'cta-wave-click');
+  await page.mouse.up();
+});
+
 test('navigation, history, direct URLs and both hero CTAs', async ({ page }) => {
   await page.goto('/'); await ready(page);
   for (const [label, slug, heading] of [

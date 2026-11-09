@@ -81,7 +81,7 @@ function accessibility() {
   attrs(root.querySelector('.github-button'), { role: 'link', 'aria-label': 'Qbits on GitHub (opens a new tab)' });
   attrs(root.querySelector('.hero-symbol'), { role: 'img', 'aria-label': 'Qbits symbol' });
   attrs(root.querySelector('.hero-art-logo'), { role: 'img', 'aria-label': 'Qbits symbol' });
-  for (const icon of root.querySelectorAll('.brand-symbol, .button-icon, .github-icon, .terminal-copy-icon, .terminal-prompt, .copy-code-icon, .external-icon, .terminal-divider, .terminal-cursor, .eyebrow-line')) attrs(icon, { 'aria-hidden': 'true' });
+  for (const icon of root.querySelectorAll('.brand-symbol, .button-icon, .github-icon, .terminal-copy-icon, .terminal-prompt, .copy-code-icon, .external-icon, .terminal-divider, .terminal-cursor, .eyebrow-line, .cta-wave')) attrs(icon, { 'aria-hidden': 'true' });
   for (const page of routeNames) for (const item of root.querySelectorAll(`.nav-item.nav-${page}`)) {
     if (page === activePage) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
   }
@@ -356,6 +356,79 @@ function external(url) {
   if (!url) { app.updateState({ notice: 'Site settings are still loading. Please retry the connection.' }); return; }
   window.open(url, '_blank', 'noopener,noreferrer');
 }
+
+function setCtaWaveOrigin(button, event) {
+  const bounds = button.getBoundingClientRect();
+  button.style.setProperty('--cta-wave-x', `${Math.max(0, Math.min(bounds.width, event.clientX - bounds.left))}px`);
+  button.style.setProperty('--cta-wave-y', `${Math.max(0, Math.min(bounds.height, event.clientY - bounds.top))}px`);
+}
+
+function triggerCtaWaves(button) {
+  button.classList.remove('is-clicking');
+  void button.offsetWidth;
+  button.classList.add('is-clicking');
+}
+
+function triggerCtaHoverWaves(button) {
+  button.classList.remove('is-wave-active');
+  void button.offsetWidth;
+  button.classList.add('is-wave-active');
+}
+
+root.addEventListener('pointerover', event => {
+  const button = event.target.closest?.('.action-button');
+  if (!button || button.contains(event.relatedTarget)) return;
+  setCtaWaveOrigin(button, event);
+  triggerCtaHoverWaves(button);
+  button.dataset.waveX = String(event.clientX);
+  button.dataset.waveY = String(event.clientY);
+  button.dataset.waveTime = String(performance.now());
+});
+
+root.addEventListener('pointermove', event => {
+  const button = event.target.closest?.('.action-button');
+  if (!button || button.dataset.waveX === undefined) return;
+  const lastX = Number(button.dataset.waveX);
+  const lastY = Number(button.dataset.waveY);
+  const distance = Math.hypot(event.clientX - lastX, event.clientY - lastY);
+  const elapsed = performance.now() - Number(button.dataset.waveTime);
+  if (distance < 36 && (distance < 12 || elapsed < 450)) return;
+  setCtaWaveOrigin(button, event);
+  triggerCtaHoverWaves(button);
+  button.dataset.waveX = String(event.clientX);
+  button.dataset.waveY = String(event.clientY);
+  button.dataset.waveTime = String(performance.now());
+}, { passive: true });
+
+root.addEventListener('pointerout', event => {
+  const button = event.target.closest?.('.action-button');
+  if (!button || button.contains(event.relatedTarget)) return;
+  delete button.dataset.waveX;
+  delete button.dataset.waveY;
+  delete button.dataset.waveTime;
+  button.classList.remove('is-wave-active');
+});
+
+root.addEventListener('pointerdown', event => {
+  const button = event.target.closest?.('.action-button');
+  if (!button) return;
+  setCtaWaveOrigin(button, event);
+  triggerCtaWaves(button);
+});
+
+root.addEventListener('click', event => {
+  const button = event.target.closest?.('.action-button');
+  if (button && event.detail === 0) triggerCtaWaves(button);
+}, true);
+
+root.addEventListener('animationend', event => {
+  if (!event.target.matches?.('.cta-wave--third')) return;
+  const button = event.target.closest('.action-button');
+  if (event.animationName === 'cta-wave-click') button?.classList.remove('is-clicking');
+  if (event.animationName === 'cta-wave-hover') {
+    button?.classList.remove('is-wave-active');
+  }
+});
 
 root.addEventListener('click', event => {
   const button = event.target.closest('button');

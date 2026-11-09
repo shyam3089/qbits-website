@@ -483,7 +483,7 @@ p, h1, h2, h3 {
   z-index: 1;
 }
 
-.action-button::before, .action-button::after {
+.action-button::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -493,37 +493,74 @@ p, h1, h2, h3 {
 }
 
 .action-button::before {
+  z-index: 0;
   background: linear-gradient(110deg, color-mix(in srgb, var(--button-start) 24%, transparent), color-mix(in srgb, var(--button-end) 38%, transparent), color-mix(in srgb, var(--accent) 20%, transparent));
   transition: opacity var(--transition-duration) var(--transition-ease);
-}
-
-.action-button::after {
-  background: linear-gradient(110deg, transparent 35%, #ffffff18 43%, #ffffff88 50%, #ffffff18 57%, transparent 65%);
-  background-size: 300% 100%;
-  background-position: 100% 0;
 }
 
 .action-button:hover::before, .action-button:focus-visible::before {
   opacity: 1;
 }
 
-.action-button:hover::after, .action-button:focus-visible::after {
-  animation: cta-shimmer 1.2s ease-in-out infinite;
+.action-button > .cta-wave {
+  position: absolute;
+  z-index: 1;
+  top: var(--cta-wave-y, 50%);
+  left: var(--cta-wave-x, 50%);
+  width: 42px;
+  height: 42px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--button-start) 68%, white) 0%, color-mix(in srgb, var(--button-end) 52%, white) 62%, transparent 100%);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.35);
 }
 
-@keyframes cta-shimmer {
-  0% {
-    background-position: 100% 0;
-    opacity: 1;
-  }
+.action-button.is-wave-active > .cta-wave {
+  animation: cta-wave-hover 2.4s ease-out 1;
+}
 
-  65% {
-    background-position: 0% 0;
-    opacity: 1;
+.action-button.is-wave-active > .cta-wave--second {
+  animation-delay: .16s;
+}
+
+.action-button.is-wave-active > .cta-wave--third {
+  animation-delay: .32s;
+}
+
+.action-button.is-clicking > .cta-wave {
+  animation: cta-wave-click 1.2s ease-out 1;
+}
+
+.action-button.is-clicking > .cta-wave--second {
+  animation-delay: .15s;
+}
+
+.action-button.is-clicking > .cta-wave--third {
+  animation-delay: .3s;
+}
+
+@keyframes cta-wave-hover {
+  0% {
+    opacity: .46;
+    transform: translate(-50%, -50%) scale(.35);
   }
 
   100% {
     opacity: 0;
+    transform: translate(-50%, -50%) scale(4.8);
+  }
+}
+
+@keyframes cta-wave-click {
+  0% {
+    opacity: .54;
+    transform: translate(-50%, -50%) scale(.35);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(4.8);
   }
 }
 
