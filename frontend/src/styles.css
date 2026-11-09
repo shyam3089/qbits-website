@@ -453,7 +453,7 @@ p, h1, h2, h3 {
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-top: 20px;
+  margin-top: 35px;
 }
 
 .action-button {
@@ -534,7 +534,7 @@ p, h1, h2, h3 {
 .button-install {
   background: var(--button-gradient);
   color: var(--button-ink);
-  border-color: transparent;
+  border: 0;
   box-shadow: var(--button-shadow);
 }
 

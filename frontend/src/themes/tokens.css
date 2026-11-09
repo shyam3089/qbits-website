@@ -299,14 +299,14 @@
   --structure-stroke: 1px;
   --terminal-start: #d5d8e2;
   --terminal-end: #c6cad7;
-  --button-start: #7040dc;
-  --button-end: #bd328f;
+  --button-start: #ff9c5c;
+  --button-end: #c7008b;
   --button-ink: #ffffff;
   --headline-gradient: linear-gradient(105deg, #e98269, #7544e8);
   --button-gradient: linear-gradient(110deg, var(--button-start), var(--button-end));
   --frame-shadow: 0 18px 50px #4c527026;
   --panel-shadow-color: #4c52704d;
-  --button-shadow: 0 8px 18px #7040dc52;
+  --button-shadow: 0 8px 18px #c7008b38;
   --control-bg: #ffffffd9;
   --control-border: #d1d1d6;
   --control-shadow: 0 1px 2px #0000000d, 0 8px 18px #4c527020;

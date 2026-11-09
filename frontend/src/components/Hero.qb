@@ -14,8 +14,8 @@ component Hero(eyebrow = "", headline = "", highlight = "", description = "", se
                     span text=description
                     span text=second
                 div class="hero-actions":
-                    ActionButton class="button-install" label="Install qbits"
                     ActionButton class="button-docs" label="Documentation"
+                    ActionButton class="button-install" label="Install qbits"
             div class="hero-art":
                 span class="hero-art-logo"
             div class="hero-features":
