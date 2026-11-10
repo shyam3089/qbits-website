@@ -30,11 +30,6 @@ component Hero(eyebrow = "", headline = "", highlight = "", description = "", se
                         span class="hero-feature-title" text="Reactive UI"
                         span text="Fast and efficient"
                 div class="hero-feature":
-                    span class="icon hero-feature-icon feature-components"
-                    div class="hero-feature-copy":
-                        span class="hero-feature-title" text="Components"
-                        span text="Reusable and modular"
-                div class="hero-feature":
                     span class="icon hero-feature-icon feature-shield"
                     div class="hero-feature-copy":
                         span class="hero-feature-title" text="Modern & Secure"

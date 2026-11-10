@@ -84,32 +84,57 @@ test('hero headline stays on one line and auto-fits after viewport changes', asy
   }
 });
 
-test('hero logo wobbles toward the cursor and resets when it leaves', async ({ page }) => {
+test('hero logo flies into place once and stays settled on hover', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);
   const logo = page.locator('.hero-art-logo');
+  await expect(logo).toHaveCSS('animation-name', 'hero-logo-arrive');
+  await expect(logo).toHaveCSS('animation-duration', '3s');
+  await expect(logo).toHaveCSS('animation-delay', '0.5s');
+  await expect(logo).toHaveCSS('animation-fill-mode', 'both');
+  const shadow = page.locator('.hero-art');
+  await expect(shadow).toHaveCSS('animation-name', 'none');
+  await expect.poll(() => shadow.evaluate(element => getComputedStyle(element, '::after').animationName)).toBe('hero-logo-shadow-arrive');
+  await expect.poll(() => shadow.evaluate(element => getComputedStyle(element, '::after').animationDelay)).toBe('0.5s');
+  await expect.poll(() => shadow.evaluate(element => getComputedStyle(element, '::after').animationDuration)).toBe('3s');
+  await expect.poll(() => logo.evaluate(element =>
+    element.getAnimations().some(animation => animation.playState === 'finished'))).toBe(true);
+  await expect.poll(() => logo.evaluate(element =>
+    new DOMMatrixReadOnly(getComputedStyle(element).transform).isIdentity)).toBe(true);
+  await expect(logo).toHaveCSS('opacity', '1');
   const bounds = await logo.boundingBox();
   await page.mouse.move(bounds.x + bounds.width * .2, bounds.y + bounds.height * .25);
-  const firstTilt = await logo.evaluate(element => ({
-    x: element.style.getPropertyValue('--hero-logo-tilt-x'),
-    y: element.style.getPropertyValue('--hero-logo-tilt-y'),
-    transform: getComputedStyle(element).transform,
-    transition: getComputedStyle(element).transitionDuration,
-  }));
-  expect(Number.parseFloat(firstTilt.x)).toBeGreaterThan(0);
-  expect(Number.parseFloat(firstTilt.y)).toBeLessThan(0);
-  expect(firstTilt.transform).toContain('matrix3d');
-  expect(firstTilt.transition).toContain('0.76s');
-  await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .75);
-  const secondTilt = await logo.evaluate(element => ({
-    x: element.style.getPropertyValue('--hero-logo-tilt-x'),
-    y: element.style.getPropertyValue('--hero-logo-tilt-y'),
-  }));
-  expect(Number.parseFloat(secondTilt.x)).toBeLessThan(0);
-  expect(Number.parseFloat(secondTilt.y)).toBeGreaterThan(0);
-  await page.mouse.move(0, 0);
-  await expect.poll(() => logo.evaluate(element => element.style.getPropertyValue('--hero-logo-tilt-x'))).toBe('0deg');
-  await expect.poll(() => logo.evaluate(element => element.style.getPropertyValue('--hero-logo-tilt-y'))).toBe('0deg');
+  await expect.poll(() => logo.evaluate(element =>
+    new DOMMatrixReadOnly(getComputedStyle(element).transform).isIdentity)).toBe(true);
+  await expect(logo).toHaveCSS('opacity', '1');
+});
+
+test('hero logo inner square has a reduced-motion-aware animation', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/'); await ready(page);
+  const square = page.locator('.hero-logo-svg .inner-square');
+  await expect(square).toBeVisible();
+  const animation = square.locator('animateTransform');
+  await expect(animation).toHaveAttribute('calcMode', 'linear');
+  await expect(animation).toHaveAttribute('dur', '2.4s');
+  const opacityAnimation = square.locator('animate[attributeName="opacity"]');
+  await expect(opacityAnimation).toHaveAttribute('values', '1; 0');
+  const before = await square.evaluate(element => {
+    const box = element.getBoundingClientRect();
+    return { x: box.x, y: box.y, opacity: getComputedStyle(element).opacity, fill: getComputedStyle(element).fill };
+  });
+  expect(before.fill).toBe('rgb(255, 255, 255)');
+  await page.waitForTimeout(1200);
+  const after = await square.evaluate(element => {
+    const box = element.getBoundingClientRect();
+    return { x: box.x, y: box.y, opacity: getComputedStyle(element).opacity, fill: getComputedStyle(element).fill };
+  });
+  expect(after.x).toBeGreaterThan(before.x);
+  expect(after.y).toBeLessThan(before.y);
+  expect(Number(after.opacity)).toBeLessThan(Number(before.opacity));
+  expect(after.fill).toBe(before.fill);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => square.evaluate(element => getComputedStyle(element).opacity)).toBe(after.opacity);
 });
 
 test('CTA waves follow the pointer and burst on click', async ({ page }) => {

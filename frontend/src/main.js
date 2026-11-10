@@ -11,6 +11,7 @@ import * as runtime from 'qbits/runtime';
 import { mountFrameArt } from './platform/visuals.js';
 import { mountBanner } from './platform/banner.js';
 import { highlightCode } from './platform/code.js';
+import heroLogoMarkup from './assets/hero-logo.svg?raw';
 
 // Qbits 1.0.1 deliberately has no async expressions, arbitrary DOM attributes,
 // canvas or clipboard API. This host adapter supplies those browser capabilities;
@@ -20,6 +21,20 @@ const app = App(root, runtime);
 const frame = root.querySelector('.site-frame');
 const frameArt = mountFrameArt(root.querySelector('.frame-art'));
 const quantum = mountBanner(root.querySelector('.quantum-background'));
+const heroLogo = root.querySelector('.hero-art-logo');
+const parsedHeroLogo = new DOMParser().parseFromString(heroLogoMarkup, 'image/svg+xml');
+if (parsedHeroLogo.querySelector('parsererror')) throw new Error('Unable to parse the hero logo SVG.');
+const heroLogoSvg = document.importNode(parsedHeroLogo.documentElement, true);
+heroLogoSvg.setAttribute('class', 'hero-logo-svg');
+heroLogoSvg.setAttribute('aria-hidden', 'true');
+heroLogo.replaceChildren(heroLogoSvg);
+const heroLogoMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const syncHeroLogoMotion = () => {
+  if (heroLogoMotion.matches) heroLogoSvg.pauseAnimations();
+  else heroLogoSvg.unpauseAnimations();
+};
+syncHeroLogoMotion();
+heroLogoMotion.addEventListener('change', syncHeroLogoMotion);
 const routeNames = new Set(['home', 'features', 'docs', 'examples', 'roadmap', 'admin']);
 const contentPageNames = new Set(['features', 'docs', 'examples', 'roadmap']);
 const themeNames = ['neon', 'ultraviolet', 'midnight', 'apple'];
@@ -419,34 +434,6 @@ root.addEventListener('animationend', event => {
   if (event.target.matches?.('.cta-wave')) event.target.remove();
 });
 
-function updateHeroLogoWobble(logo, event) {
-  const bounds = logo.getBoundingClientRect();
-  const x = (event.clientX - bounds.left) / bounds.width;
-  const y = (event.clientY - bounds.top) / bounds.height;
-  const tiltX = (0.5 - y) * 7;
-  const tiltY = (x - 0.5) * 9;
-  logo.style.setProperty('--hero-logo-tilt-x', `${tiltX}deg`);
-  logo.style.setProperty('--hero-logo-tilt-y', `${tiltY}deg`);
-}
-
-root.addEventListener('pointerover', event => {
-  const logo = event.target.closest?.('.hero-art-logo');
-  if (!logo || logo.contains(event.relatedTarget) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  updateHeroLogoWobble(logo, event);
-});
-
-root.addEventListener('pointermove', event => {
-  const logo = event.target.closest?.('.hero-art-logo');
-  if (logo && !matchMedia('(prefers-reduced-motion: reduce)').matches) updateHeroLogoWobble(logo, event);
-}, { passive: true });
-
-root.addEventListener('pointerout', event => {
-  const logo = event.target.closest?.('.hero-art-logo');
-  if (!logo || logo.contains(event.relatedTarget)) return;
-  logo.style.setProperty('--hero-logo-tilt-x', '0deg');
-  logo.style.setProperty('--hero-logo-tilt-y', '0deg');
-});
-
 root.addEventListener('click', event => {
   const button = event.target.closest('button');
   if (!button) return;
@@ -516,7 +503,7 @@ root.addEventListener('keydown', event => {
   if (event.key === 'Enter' && event.target.matches('.password-input')) { event.preventDefault(); root.querySelector('.admin-login')?.click(); }
 });
 window.addEventListener('popstate', () => { void route(pathPage(), false, true); });
-window.addEventListener('pagehide', () => { pageRequest?.abort(); sectionScrollCleanup?.(); clearTimeout(feedbackTimer); observer.disconnect(); quantum.dispose(); frameArt.dispose(); pageView?.(); adminView?.(); app(); }, { once: true });
+window.addEventListener('pagehide', () => { pageRequest?.abort(); sectionScrollCleanup?.(); clearTimeout(feedbackTimer); observer.disconnect(); heroLogoMotion.removeEventListener('change', syncHeroLogoMotion); quantum.dispose(); frameArt.dispose(); pageView?.(); adminView?.(); app(); }, { once: true });
 accessibility();
 window.addEventListener('resize', updateNavIndicator);
 window.addEventListener('resize', fitHeroHeadline);
