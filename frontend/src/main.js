@@ -47,11 +47,9 @@ function currentHeroLogo() {
 function restartHeroLogoEntrance() {
   const heroLogo = currentHeroLogo();
   if (!heroLogo) return;
-  heroLogo.logo.classList.remove('hero-logo-entering');
   heroLogo.art.classList.remove('hero-logo-entering');
   if (heroLogoMotion.matches) return;
-  void heroLogo.logo.offsetWidth;
-  heroLogo.logo.classList.add('hero-logo-entering');
+  void heroLogo.art.offsetWidth;
   heroLogo.art.classList.add('hero-logo-entering');
 }
 
@@ -59,7 +57,6 @@ function syncHeroLogoMotion() {
   const heroLogo = currentHeroLogo();
   if (!heroLogo) return;
   if (heroLogoMotion.matches) {
-    heroLogo.logo.classList.remove('hero-logo-entering');
     heroLogo.art.classList.remove('hero-logo-entering');
   } else if (activePage === 'home') {
     restartHeroLogoEntrance();

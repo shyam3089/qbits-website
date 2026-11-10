@@ -181,25 +181,19 @@ test('hero logo flies into place once and stays settled on hover', async ({ page
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);
   const logo = page.locator('.hero-art-logo');
-  await expect(logo).toHaveCSS('animation-name', 'hero-logo-arrive');
-  await expect(logo).toHaveCSS('animation-duration', '3s');
-  await expect(logo).toHaveCSS('animation-delay', '0.5s');
-  await expect(logo).toHaveCSS('animation-fill-mode', 'both');
-  const shadow = page.locator('.hero-art');
-  await expect(shadow).toHaveCSS('animation-name', 'none');
-  await expect.poll(() => shadow.evaluate(element => getComputedStyle(element, '::after').animationName)).toBe('hero-logo-shadow-arrive');
-  await expect.poll(() => shadow.evaluate(element => getComputedStyle(element, '::after').animationDelay)).toBe('0.5s');
-  await expect.poll(() => shadow.evaluate(element => getComputedStyle(element, '::after').animationDuration)).toBe('3s');
-  await expect.poll(() => logo.evaluate(element =>
+  const art = page.locator('.hero-art');
+  await expect(art).toHaveCSS('animation-name', 'hero-art-arrive');
+  await expect(art).toHaveCSS('animation-duration', '0.9s');
+  await expect(art).toHaveCSS('animation-delay', '0s');
+  await expect(art).toHaveCSS('animation-fill-mode', 'both');
+  await expect.poll(() => art.evaluate(element =>
     element.getAnimations().some(animation => animation.playState === 'finished'))).toBe(true);
-  await expect.poll(() => logo.evaluate(element =>
-    new DOMMatrixReadOnly(getComputedStyle(element).transform).isIdentity)).toBe(true);
+  await expect.poll(() => art.evaluate(element =>
+    getComputedStyle(element).translate)).toMatch(/^(none|0px)$/);
   await expect(logo).toHaveCSS('opacity', '1');
-  await expect(logo).not.toHaveCSS('transform', /^matrix3d/);
   const bounds = await logo.boundingBox();
   await page.mouse.move(bounds.x + bounds.width * .2, bounds.y + bounds.height * .25);
-  await expect.poll(() => logo.evaluate(element =>
-    new DOMMatrixReadOnly(getComputedStyle(element).transform).isIdentity)).toBe(true);
+  await expect(art).toHaveCSS('translate', /^(none|0px)$/);
   await expect(logo).toHaveCSS('opacity', '1');
 });
 
@@ -207,19 +201,25 @@ test('hero logo SVG and entrance animation restart when returning home', async (
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);
   const logo = page.locator('.hero-art-logo');
+  const art = page.locator('.hero-art');
   await expect(logo.locator('.hero-logo-svg')).toBeVisible();
-  await expect.poll(() => logo.evaluate(element =>
+  await expect.poll(() => art.evaluate(element =>
     element.getAnimations().some(animation => animation.playState === 'finished'))).toBe(true);
+  await page.evaluate(() => {
+    window.heroArtAnimationStarts = 0;
+    document.addEventListener('animationstart', event => {
+      if (event.target.matches('.hero-art')) window.heroArtAnimationStarts += 1;
+    }, true);
+  });
 
   await page.getByRole('button', { name: 'Docs', exact: true }).click();
   await expect(page).toHaveURL(/\/docs$/);
   await page.getByRole('button', { name: 'Home', exact: true }).click();
   await expect(page).toHaveURL('/');
   await expect(page.locator('.hero-art-logo .hero-logo-svg')).toBeVisible();
-  await expect(page.locator('.hero-art-logo')).toHaveCSS('animation-name', 'hero-logo-arrive');
-  await expect.poll(() => page.locator('.hero-art-logo').evaluate(element =>
-    element.getAnimations().some(animation => animation.playState === 'running'))).toBe(true);
-  await expect.poll(() => page.locator('.hero-art-logo').evaluate(element =>
+  await expect(art).toHaveCSS('animation-name', 'hero-art-arrive');
+  await expect.poll(() => page.evaluate(() => window.heroArtAnimationStarts)).toBe(1);
+  await expect.poll(() => art.evaluate(element =>
     element.getAnimations().some(animation => animation.playState === 'finished'))).toBe(true);
   await expect(page.locator('.hero-art-logo')).toHaveCSS('opacity', '1');
 });
@@ -229,12 +229,13 @@ test('hero logo remains visible throughout its entrance animation', async ({ pag
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/'); await ready(page);
   const logo = page.locator('.hero-art-logo');
+  const art = page.locator('.hero-art');
   await expect(logo.locator('.hero-logo-svg')).toBeVisible();
   await expect(logo).toHaveCSS('opacity', '1');
-  await expect(logo).toHaveCSS('animation-name', 'hero-logo-arrive');
-  await expect.poll(() => logo.evaluate(element => {
-    const transform = getComputedStyle(element).transform;
-    return transform !== 'none' && !transform.startsWith('matrix3d');
+  await expect(art).toHaveCSS('animation-name', 'hero-art-arrive-mobile');
+  await expect.poll(() => art.evaluate(element => {
+    const translate = getComputedStyle(element).translate;
+    return translate !== 'none' && translate !== '0px 0px';
   })).toBe(true);
   await page.waitForTimeout(600);
   await expect(logo).toHaveCSS('opacity', '1');

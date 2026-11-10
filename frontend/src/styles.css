@@ -322,22 +322,6 @@ p, h1, h2, h3 {
   transform-origin: center;
 }
 
-.hero-art.hero-logo-entering::after {
-  animation: hero-logo-shadow-arrive 3s cubic-bezier(.22, .72, .24, 1) .5s both;
-}
-
-@keyframes hero-logo-shadow-arrive {
-  from {
-    opacity: 0;
-    transform: translateY(-38px) scale(.28);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 .hero-art-logo {
   position: relative;
   z-index: 1;
@@ -348,17 +332,17 @@ p, h1, h2, h3 {
   transform-origin: center;
 }
 
-.hero-art-logo.hero-logo-entering {
-  animation: hero-logo-arrive 3s cubic-bezier(.22, .72, .24, 1) .5s both;
+.hero-art.hero-logo-entering {
+  animation: hero-art-arrive 900ms cubic-bezier(.22, .72, .24, 1) both;
 }
 
-@keyframes hero-logo-arrive {
+@keyframes hero-art-arrive {
   from {
-    transform: translateY(-38px) scale(.32);
+    translate: 0 -28px;
   }
 
   to {
-    transform: none;
+    translate: 0 0;
   }
 }
 
@@ -1198,7 +1182,22 @@ input:focus {
     justify-items: center;
     align-self: auto;
     margin-bottom: clamp(32px, 5svh, 42px);
+    animation-name: none;
     transform: translateY(-20px);
+  }
+
+  .hero-art.hero-logo-entering {
+    animation-name: hero-art-arrive-mobile;
+  }
+
+  @keyframes hero-art-arrive-mobile {
+    from {
+      translate: 0 -28px;
+    }
+
+    to {
+      translate: 0 0;
+    }
   }
 
   .hero-art-logo {
@@ -1344,9 +1343,6 @@ input:focus {
     transform: none;
   }
 
-  .hero-art::after {
-    opacity: 1;
-    transform: none;
-  }
+
 
 }
