@@ -466,6 +466,55 @@ for (const [label, width, height] of [['tablet', 820, 1180], ['mobile', 390, 844
   });
 }
 
+test('mobile hero shows its logo above aligned copy and CTAs, with visible waves', async ({ page }) => {
+  for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 568 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/'); await ready(page);
+    const layout = await page.evaluate(() => {
+      const bounds = selector => {
+        const { x, right, top, bottom, width, height } = document.querySelector(selector).getBoundingClientRect();
+        return { x, right, top, bottom, width, height };
+      };
+      const frame = bounds('.site-frame');
+      const logo = bounds('.hero-art-logo');
+      const copy = bounds('.hero-copy');
+      const eyebrow = bounds('.hero-eyebrow');
+      const actions = [...document.querySelectorAll('.action-button')].map(button => {
+        const { x, right, top, bottom, width, height } = button.getBoundingClientRect();
+        const icon = button.querySelector('.button-icon').getBoundingClientRect();
+        return { x, right, top, bottom, width, height, iconLeft: icon.left, iconRight: icon.right };
+      });
+      const github = bounds('.github-button');
+      const nav = bounds('.nav-links');
+      const navItemHeight = document.querySelector('.nav-item').getBoundingClientRect().height;
+      const canvas = document.querySelector('.banner-canvas');
+      const context = canvas.getContext('2d');
+      const pixels = context.getImageData(0, Math.floor(canvas.height * .45), canvas.width, Math.floor(canvas.height * .35)).data;
+      let visibleWavePixels = 0;
+      for (let index = 3; index < pixels.length; index += 4) if (pixels[index] > 0) visibleWavePixels++;
+      return { frame, logo, copy, eyebrow, actions, github, nav, navItemHeight, visibleWavePixels };
+    });
+
+    expect(layout.logo.width, JSON.stringify(viewport)).toBeGreaterThan(80);
+    expect(layout.eyebrow.top - layout.logo.bottom, JSON.stringify(viewport)).toBeGreaterThanOrEqual(24);
+    expect(layout.nav.top - layout.github.bottom, JSON.stringify(viewport)).toBeGreaterThanOrEqual(26);
+    expect(layout.navItemHeight).toBeLessThan(40);
+    expect(layout.actions[0].width).toBeGreaterThan(160);
+    expect(layout.actions[0].width).toBe(layout.actions[1].width);
+    const actionsCenter = (layout.actions[0].x + layout.actions[0].right) / 2;
+    expect(actionsCenter).toBeCloseTo((layout.frame.x + layout.frame.right) / 2, 0);
+    for (const button of layout.actions) {
+      expect(button.iconLeft).toBeGreaterThanOrEqual(button.x);
+      expect(button.iconRight).toBeLessThanOrEqual(button.right);
+      expect(button.right).toBeLessThanOrEqual(layout.frame.right);
+      expect(button.bottom).toBeLessThanOrEqual(layout.frame.bottom);
+    }
+    expect(layout.github.right).toBeGreaterThan(layout.frame.right - 20);
+    expect(layout.github.right).toBeLessThanOrEqual(layout.frame.right);
+    expect(layout.visibleWavePixels).toBeGreaterThan(0);
+  }
+});
+
 test('light banner animates, pauses off home, and respects motion changes', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);

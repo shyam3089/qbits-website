@@ -334,3 +334,7 @@
 @media (--compact) {
   :root { --headline-size: 34px; --description-size: 16px; --hero-left: 24px; --hero-top: 155px; --hero-right: 24px; --eyebrow-size: 11px; --terminal-font-size: 15px; --terminal-gap: 10px; --content-left: 24px; --content-title-size: 27px; }
 }
+
+@media (--mobile) {
+  :root { --github-right: 14px; --button-width: 100%; }
+}

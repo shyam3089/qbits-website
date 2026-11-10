@@ -1183,19 +1183,66 @@ input:focus {
 }
 
 @media (--mobile) {
+  .hero-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "art"
+      "copy"
+      "actions";
+  }
+
+  .hero-art {
+    position: relative;
+    grid-area: art;
+    display: grid;
+    justify-items: center;
+    align-self: auto;
+    margin-bottom: clamp(32px, 5svh, 42px);
+    transform: translateY(-20px);
+  }
+
+  .hero-art-logo {
+    width: clamp(96px, 30vw, 128px);
+  }
+
+  .hero-art::after {
+    width: 100%;
+    height: clamp(12px, 2.5svh, 20px);
+  }
+
+  .hero-copy {
+    grid-area: copy;
+    width: 100%;
+  }
+
   .navigation {
     align-items: flex-start;
     padding-top: var(--github-top);
   }
 
   .nav-links {
-    top: calc(var(--github-top) + var(--github-height) + var(--admin-label-gap));
+    top: calc(var(--github-top) + var(--github-height) + 28px);
+  }
+
+  .nav-item {
+    padding-block: 10px;
   }
 
   .hero-actions {
+    grid-area: actions;
     display: grid;
     grid-template-columns: 1fr;
-    max-width: var(--terminal-max-width);
+    justify-self: center;
+    width: min(100%, 184px);
+    max-width: none;
+    gap: 12px;
+  }
+
+  .action-button {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 12px;
   }
 
   .quantum-background {
@@ -1250,6 +1297,31 @@ input:focus {
 }
 
 @media (--compact) {
+  .hero {
+    top: 50%;
+    transform: translateY(calc(-50% + var(--hero-shadow-space) - 16px));
+  }
+
+  .hero-art {
+    margin-bottom: 32px;
+  }
+
+  .hero-art-logo {
+    width: clamp(84px, 27vw, 108px);
+  }
+
+  .headline {
+    margin-top: 16px;
+  }
+
+  .hero-description {
+    margin-top: 14px;
+  }
+
+  .hero-actions {
+    margin-top: 18px;
+  }
+
   .eyebrow-line {
     display: none;
   }

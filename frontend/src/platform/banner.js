@@ -15,6 +15,7 @@ export function mountBanner(target) {
     ctx.clearRect(0, 0, width, height);
     const phase = time / 1800;
     const slope = Math.tan(25 * Math.PI / 180);
+    const mobile = width <= 700;
     const spread = Math.max(28, Math.min(width, height) * .13);
     ctx.lineWidth = Math.max(.55, Math.min(width / 1200, 1) * .85);
 
@@ -30,7 +31,7 @@ export function mountBanner(target) {
       const drop = lower ? height * .28 * (ribbon - 2) * Math.pow(t, 1.5) : 0;
       // Restore the lower-left origin and upward-right diagonal.
       const y = height * (.73 + layer * .035) - (x - width * .55) * slope
-        + height * .4 - 100
+        + height * (mobile ? .1 : .4) - 100
         + Math.sin(t * Math.PI * 2.1 + phase + layer * 1.6) * height * .07
         + drop
         + offset * spread * originSpread * envelope * twist;
