@@ -22,25 +22,3 @@ component Hero(eyebrow = "", headline = "", highlight = "", description = "", se
 
             div class="hero-art":
                 span class="hero-art-logo"
-
-            div class="hero-features":
-                div class="hero-feature":
-                    span class="icon hero-feature-icon feature-code"
-
-                    div class="hero-feature-copy":
-                        span class="hero-feature-title" text="Simple Syntax"
-                        span text="Clean and intuitive"
-
-                div class="hero-feature":
-                    span class="icon hero-feature-icon feature-bolt"
-
-                    div class="hero-feature-copy":
-                        span class="hero-feature-title" text="Reactive UI"
-                        span text="Fast and efficient"
-
-                div class="hero-feature":
-                    span class="icon hero-feature-icon feature-shield"
-
-                    div class="hero-feature-copy":
-                        span class="hero-feature-title" text="Modern & Secure"
-                        span text="Built for real-world apps"

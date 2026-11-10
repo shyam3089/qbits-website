@@ -16,8 +16,11 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
     const { width, height } = shell.ownerSVGElement.viewBox.baseVal;
     const filled = (x, y) => shell.isPointInFill(new DOMPoint(x, y));
     const wordmark = document.querySelector('.brand-wordmark');
+    const heroCopy = document.querySelector('.hero-copy').getBoundingClientRect();
+    const heroLayout = document.querySelector('.hero-layout').getBoundingClientRect();
     return {
       frame: rect('.site-frame'), brand: rect('.brand'), github: rect('.github-button'), heroContent: rect('.hero-eyebrow'), actions: rect('.hero-actions'),
+      heroCopyWidthRatio: heroCopy.width / heroLayout.width,
       brandSymbolImage: getComputedStyle(document.querySelector('.brand-symbol')).backgroundImage,
       brandWordmarkFont: getComputedStyle(wordmark).fontFamily,
       brandWordmarkWeight: getComputedStyle(wordmark).fontWeight,
@@ -41,6 +44,8 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
   expect(layout.frame).toEqual({ x: 44, y: 20, width: 1166, height: 723 });
   expect(Math.abs((layout.brand.x - layout.frame.x) - ((layout.frame.x + layout.frame.width) - (layout.github.x + layout.github.width)))).toBeLessThan(1);
   expect(layout.heroContent.x).toBe(122);
+  expect(layout.heroCopyWidthRatio).toBeGreaterThan(0.5);
+  expect(layout.heroCopyWidthRatio).toBeLessThan(0.6);
   expect(layout.brandSymbolImage).toContain('logo-symbol-original-');
   expect(layout.brandWordmarkFont).toContain('Outfit');
   expect(layout.brandWordmarkWeight).toBe('500');
@@ -57,19 +62,17 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
   expect(layout.scroll).toBe(false); expect(errors).toEqual([]);
   const heroOrder = await page.evaluate(() => {
     const description = document.querySelector('.hero-description').getBoundingClientRect();
-    const features = document.querySelector('.hero-features').getBoundingClientRect();
     const actionsElement = document.querySelector('.hero-actions');
     const actions = actionsElement.getBoundingClientRect();
     return {
       descriptionBottom: description.bottom,
-      featuresTop: features.top,
-      featuresBottom: features.bottom,
       actionsTop: actions.top,
+      featuresAbsent: document.querySelector('.hero-features') === null,
       actionsInsideLayout: actionsElement.parentElement === document.querySelector('.hero-layout'),
     };
   });
-  expect(heroOrder.featuresTop).toBeGreaterThanOrEqual(heroOrder.descriptionBottom);
-  expect(heroOrder.actionsTop).toBeGreaterThanOrEqual(heroOrder.featuresBottom);
+  expect(heroOrder.featuresAbsent).toBe(true);
+  expect(heroOrder.actionsTop).toBeGreaterThanOrEqual(heroOrder.descriptionBottom);
   expect(heroOrder.actionsInsideLayout).toBe(true);
   await page.screenshot({ path: '../artifacts/desktop.png', animations: 'disabled' });
 });
