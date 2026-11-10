@@ -252,7 +252,6 @@ p, h1, h2, h3 {
   background: var(--control-bg);
   border: var(--button-border) solid var(--control-border);
   border-radius: var(--button-radius);
-  box-shadow: var(--control-shadow);
   font-size: var(--github-font-size);
   font-weight: 500;
 }
@@ -449,31 +448,24 @@ p, h1, h2, h3 {
 .action-button {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
+  transition: background var(--transition-duration) var(--transition-ease),
+    border-color var(--transition-duration) var(--transition-ease),
+    transform var(--transition-duration) var(--transition-ease);
+}
+
+.action-button, .github-button {
+  transition: filter 900ms cubic-bezier(.22, .61, .36, 1);
+  filter:
+    drop-shadow(0 0 0 transparent)
+    drop-shadow(0 0 0 transparent)
+    drop-shadow(0 0 0 transparent)
+    drop-shadow(0 0 0 transparent);
 }
 
 .action-button > span {
   position: relative;
   z-index: 1;
-}
-
-.action-button::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  opacity: 0;
-}
-
-.action-button::before {
-  z-index: 0;
-  background: linear-gradient(110deg, color-mix(in srgb, var(--button-start) 24%, transparent), color-mix(in srgb, var(--button-end) 38%, transparent), color-mix(in srgb, var(--accent) 20%, transparent));
-  transition: opacity var(--transition-duration) var(--transition-ease);
-}
-
-.action-button:hover::before, .action-button:focus-visible::before {
-  opacity: 1;
 }
 
 .action-button > .cta-wave {
@@ -520,8 +512,12 @@ p, h1, h2, h3 {
   }
 }
 
-.action-button:hover, .github-button:hover {
-  box-shadow: var(--control-hover-shadow);
+.action-button:hover, .action-button:focus-visible, .github-button:hover, .github-button:focus-visible {
+  filter:
+    drop-shadow(0 0 4px color-mix(in srgb, var(--banner-orange) 28%, transparent))
+    drop-shadow(0 0 2px color-mix(in srgb, var(--banner-pink) 25%, transparent))
+    drop-shadow(0 0 6px color-mix(in srgb, var(--banner-magenta) 22%, transparent))
+    drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 18%, transparent));
 }
 
 .button-install {

@@ -224,7 +224,7 @@
   --wave-mobile-opacity: 0.48;
   --wave-content-opacity: 0.12;
   --logo-image: url('../assets/logo-symbol-original.png');
-  --icon-github: url('@tabler/icons/outline/brand-github.svg');
+  --icon-github: url('../assets/github.svg');
   --icon-download: url('@tabler/icons/outline/download.svg');
   --icon-book: url('@tabler/icons/outline/book-2.svg');
   --icon-copy: url('@tabler/icons/outline/copy.svg');

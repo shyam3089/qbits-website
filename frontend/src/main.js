@@ -400,6 +400,7 @@ function external(url) {
 }
 
 function triggerCtaWaves(button, event, kind) {
+  if (!ctaWavesEnabled) return;
   const bounds = button.getBoundingClientRect();
   const x = event ? Math.max(0, Math.min(bounds.width, event.clientX - bounds.left)) : bounds.width / 2;
   const y = event ? Math.max(0, Math.min(bounds.height, event.clientY - bounds.top)) : bounds.height / 2;
@@ -415,7 +416,10 @@ function triggerCtaWaves(button, event, kind) {
   }
 }
 
+const ctaWavesEnabled = false;
+
 root.addEventListener('pointerover', event => {
+  if (!ctaWavesEnabled) return;
   const button = event.target.closest?.('.action-button');
   if (!button || button.contains(event.relatedTarget)) return;
   triggerCtaWaves(button, event, 'hover');
@@ -425,6 +429,7 @@ root.addEventListener('pointerover', event => {
 });
 
 root.addEventListener('pointermove', event => {
+  if (!ctaWavesEnabled) return;
   const button = event.target.closest?.('.action-button');
   if (!button || button.dataset.waveX === undefined) return;
   const lastX = Number(button.dataset.waveX);
@@ -447,12 +452,14 @@ root.addEventListener('pointerout', event => {
 });
 
 root.addEventListener('pointerdown', event => {
+  if (!ctaWavesEnabled) return;
   const button = event.target.closest?.('.action-button');
   if (!button) return;
   triggerCtaWaves(button, event, 'click');
 });
 
 root.addEventListener('click', event => {
+  if (!ctaWavesEnabled) return;
   const button = event.target.closest?.('.action-button');
   if (button && event.detail === 0) triggerCtaWaves(button, null, 'click');
 }, true);

@@ -209,45 +209,45 @@ test('hero logo inner square has a reduced-motion-aware animation', async ({ pag
   await expect.poll(() => square.evaluate(element => getComputedStyle(element).opacity)).toBe(after.opacity);
 });
 
-test('CTA waves follow the pointer and burst on click', async ({ page }) => {
+test('CTA waves are paused and an external gradient glow expands on hover', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);
   const cta = page.getByRole('button', { name: 'Documentation', exact: true });
-  const bounds = await cta.boundingBox();
-  const x = bounds.x + bounds.width * .28;
-  const y = bounds.y + bounds.height * .7;
-  await page.mouse.move(x, y);
-  const firstWave = cta.locator('.cta-wave--hover.cta-wave--first').first();
-  await expect(firstWave).toHaveCSS('animation-name', 'cta-wave-hover');
-  await expect(cta.locator('.cta-wave--first')).toHaveCSS('animation-delay', '0s');
-  await expect(cta.locator('.cta-wave--second')).toHaveCSS('animation-delay', '0.3s');
-  await expect(cta.locator('.cta-wave--third')).toHaveCSS('animation-delay', '0.6s');
-  await expect(firstWave).toHaveCSS('animation-duration', '3.2s');
-  await expect(firstWave.evaluate(wave => wave.getAnimations()[0].effect.getKeyframes()[0].transform))
-    .resolves.toContain('scale(0.8)');
-  await expect(firstWave).toHaveCSS('width', '42px');
-  await expect(firstWave).toHaveCSS('animation-iteration-count', '1');
-  await expect(firstWave).toHaveCSS('border-top-width', '0px');
-  await expect(firstWave).not.toHaveCSS('background-image', 'none');
-  const flash = await cta.evaluate(button => getComputedStyle(button, '::after').animationName);
-  expect(flash).toBe('none');
-  const origin = await firstWave.evaluate(wave => ({ x: wave.style.left, y: wave.style.top }));
-  expect(Math.abs(Number.parseFloat(origin.x) - bounds.width * .28)).toBeLessThan(1);
-  expect(Math.abs(Number.parseFloat(origin.y) - bounds.height * .7)).toBeLessThan(1);
-  await page.mouse.move(x + 8, y);
-  await expect(cta.locator('.cta-wave--hover')).toHaveCount(3);
-  await page.mouse.move(x + 40, y);
-  await expect(cta.locator('.cta-wave--hover')).toHaveCount(6);
-  const newOrigin = await cta.locator('.cta-wave--hover.cta-wave--first').nth(1)
-    .evaluate(wave => ({ x: wave.style.left, y: wave.style.top }));
-  expect(newOrigin).not.toEqual(origin);
-  await expect(firstWave).toHaveCSS('animation-name', 'cta-wave-hover');
-  await expect(firstWave).toHaveCSS('animation-duration', '3.2s');
-  await page.mouse.down();
-  const clickWave = cta.locator('.cta-wave--click.cta-wave--first').first();
-  await expect(clickWave).toHaveCSS('animation-name', 'cta-wave-click');
-  await expect(clickWave).toHaveCSS('animation-duration', '1.8s');
-  await page.mouse.up();
+  await expect(cta.locator('.cta-wave')).toHaveCount(0);
+  const before = await cta.evaluate(button => ({
+    filter: getComputedStyle(button).filter,
+    boxShadow: getComputedStyle(button).boxShadow,
+    transition: getComputedStyle(button).transition,
+  }));
+  expect(await cta.evaluate(button => getComputedStyle(button).overflow)).toBe('visible');
+  await cta.hover();
+  await expect.poll(() => cta.evaluate(button => getComputedStyle(button).filter)).not.toBe(before.filter);
+  expect(await cta.evaluate(button => getComputedStyle(button).transition)).toContain('filter 0.9s');
+  expect(await cta.evaluate(button => getComputedStyle(button).boxShadow)).toBe(before.boxShadow);
+  expect(await cta.evaluate(button => getComputedStyle(button, '::before').content)).toBe('none');
+  await expect(cta.locator('.cta-wave')).toHaveCount(0);
+});
+
+test('all CTA buttons share one gradient glow on hover and focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/'); await ready(page);
+  const buttons = [
+    page.getByRole('button', { name: 'Documentation', exact: true }),
+    page.getByRole('button', { name: 'Install qbits', exact: true }),
+    page.getByRole('link', { name: 'Qbits on GitHub' }),
+  ];
+  const filters = [];
+  for (const button of buttons) {
+    const idleFilter = await button.evaluate(element => getComputedStyle(element).filter);
+    const transition = await button.evaluate(element => getComputedStyle(element).transition);
+    expect(transition).toContain('filter 0.9s');
+    await button.hover();
+    await expect.poll(() => button.evaluate(element => getComputedStyle(element).filter)).not.toBe(idleFilter);
+    filters.push(await button.evaluate(element => getComputedStyle(element).filter));
+    await button.focus();
+    await expect(button).toBeFocused();
+  }
+  expect(new Set(filters).size).toBe(1);
 });
 
 test('navigation, history, direct URLs and both hero CTAs', async ({ page }) => {
