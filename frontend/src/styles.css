@@ -344,6 +344,7 @@ p, h1, h2, h3 {
   display: block;
   width: clamp(220px, 40svh, 310px);
   aspect-ratio: 150.58 / 169.29;
+  opacity: 1;
   transform-origin: center;
 }
 
@@ -353,12 +354,10 @@ p, h1, h2, h3 {
 
 @keyframes hero-logo-arrive {
   from {
-    opacity: 0;
-    transform: perspective(1000px) translateZ(-850px) scale(.32);
+    transform: translateY(-38px) scale(.32);
   }
 
   to {
-    opacity: 1;
     transform: none;
   }
 }

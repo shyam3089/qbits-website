@@ -195,6 +195,7 @@ test('hero logo flies into place once and stays settled on hover', async ({ page
   await expect.poll(() => logo.evaluate(element =>
     new DOMMatrixReadOnly(getComputedStyle(element).transform).isIdentity)).toBe(true);
   await expect(logo).toHaveCSS('opacity', '1');
+  await expect(logo).not.toHaveCSS('transform', /^matrix3d/);
   const bounds = await logo.boundingBox();
   await page.mouse.move(bounds.x + bounds.width * .2, bounds.y + bounds.height * .25);
   await expect.poll(() => logo.evaluate(element =>
@@ -221,6 +222,23 @@ test('hero logo SVG and entrance animation restart when returning home', async (
   await expect.poll(() => page.locator('.hero-art-logo').evaluate(element =>
     element.getAnimations().some(animation => animation.playState === 'finished'))).toBe(true);
   await expect(page.locator('.hero-art-logo')).toHaveCSS('opacity', '1');
+});
+
+test('hero logo remains visible throughout its entrance animation', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/'); await ready(page);
+  const logo = page.locator('.hero-art-logo');
+  await expect(logo.locator('.hero-logo-svg')).toBeVisible();
+  await expect(logo).toHaveCSS('opacity', '1');
+  await expect(logo).toHaveCSS('animation-name', 'hero-logo-arrive');
+  await expect.poll(() => logo.evaluate(element => {
+    const transform = getComputedStyle(element).transform;
+    return transform !== 'none' && !transform.startsWith('matrix3d');
+  })).toBe(true);
+  await page.waitForTimeout(600);
+  await expect(logo).toHaveCSS('opacity', '1');
+  await expect(logo.locator('.hero-logo-svg')).toBeVisible();
 });
 
 test('hero logo inner square has a reduced-motion-aware animation', async ({ page }) => {
