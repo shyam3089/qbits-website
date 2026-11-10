@@ -114,8 +114,50 @@ test('hero stays vertically centered in the frame at desktop and mobile sizes', 
       const container = document.querySelector('.view-container').getBoundingClientRect();
       return { frame: { top: frame.top, bottom: frame.bottom }, hero: { top: hero.top, bottom: hero.bottom }, container: { top: container.top, bottom: container.bottom } };
     });
+
     const alignment = Math.abs((geometry.frame.top + geometry.frame.bottom) / 2 - (geometry.hero.top + geometry.hero.bottom) / 2);
     expect(alignment, JSON.stringify({ viewport, geometry })).toBeLessThanOrEqual(1);
+  }
+});
+
+test('right hero logo and shadow scale with viewport height', async ({ page }) => {
+  const sizes = [];
+  for (const height of [900, 650]) {
+    await page.setViewportSize({ width: 1366, height });
+    await page.goto('/'); await ready(page);
+    sizes.push(await page.evaluate(() => {
+      const logo = document.querySelector('.hero-art-logo').getBoundingClientRect();
+      const shadow = getComputedStyle(document.querySelector('.hero-art'), '::after');
+      return {
+        logoWidth: logo.width,
+        logoHeight: logo.height,
+        shadowWidth: Number.parseFloat(shadow.width),
+        shadowHeight: Number.parseFloat(shadow.height),
+      };
+    }));
+  }
+
+  expect(sizes[0].logoWidth).toBeGreaterThan(sizes[1].logoWidth);
+  expect(sizes[0].logoHeight).toBeGreaterThan(sizes[1].logoHeight);
+  expect(sizes[0].shadowWidth).toBe(sizes[0].logoWidth);
+  expect(sizes[1].shadowWidth).toBe(sizes[1].logoWidth);
+  expect(sizes[0].shadowHeight).toBeGreaterThan(sizes[1].shadowHeight);
+});
+
+test('right hero logo is vertically centered against the left content and actions', async ({ page }) => {
+  for (const height of [900, 768, 650]) {
+    await page.setViewportSize({ width: 1366, height });
+    await page.goto('/'); await ready(page);
+    const alignment = await page.evaluate(() => {
+      const copy = document.querySelector('.hero-copy').getBoundingClientRect();
+      const actions = document.querySelector('.hero-actions').getBoundingClientRect();
+      const logo = document.querySelector('.hero-art-logo').getBoundingClientRect();
+      return {
+        contentCenter: (Math.min(copy.top, actions.top) + Math.max(copy.bottom, actions.bottom)) / 2,
+        logoCenter: (logo.top + logo.bottom) / 2,
+      };
+    });
+    expect(Math.abs(alignment.logoCenter - alignment.contentCenter), JSON.stringify({ height, ...alignment })).toBeLessThanOrEqual(1);
   }
 });
 
