@@ -467,7 +467,7 @@ for (const [label, width, height] of [['tablet', 820, 1180], ['mobile', 390, 844
 }
 
 test('mobile hero shows its logo above aligned copy and CTAs, with visible waves', async ({ page }) => {
-  for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 568 }]) {
+  for (const viewport of [{ width: 390, height: 844 }, { width: 390, height: 630 }, { width: 320, height: 568 }]) {
     await page.setViewportSize(viewport);
     await page.goto('/'); await ready(page);
     const layout = await page.evaluate(() => {
@@ -496,6 +496,9 @@ test('mobile hero shows its logo above aligned copy and CTAs, with visible waves
     });
 
     expect(layout.logo.width, JSON.stringify(viewport)).toBeGreaterThan(80);
+    if (viewport.height >= 600) {
+      expect(layout.logo.top - layout.nav.bottom, JSON.stringify({ viewport, logo: layout.logo, nav: layout.nav })).toBeGreaterThanOrEqual(24);
+    }
     expect(layout.eyebrow.top - layout.logo.bottom, JSON.stringify(viewport)).toBeGreaterThanOrEqual(24);
     expect(layout.nav.top - layout.github.bottom, JSON.stringify(viewport)).toBeGreaterThanOrEqual(26);
     expect(layout.navItemHeight).toBeLessThan(40);

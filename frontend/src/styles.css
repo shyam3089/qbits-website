@@ -1327,6 +1327,12 @@ input:focus {
   }
 }
 
+@media (--mobile) and (min-height: 600px) {
+  .hero {
+    top: calc(50% + clamp(30px, 10svh, 64px));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;
