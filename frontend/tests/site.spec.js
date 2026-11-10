@@ -100,6 +100,25 @@ test('short desktop keeps both hero buttons fully visible', async ({ page }) => 
   await page.screenshot({ path: '../artifacts/short-desktop.png', animations: 'disabled' });
 });
 
+test('hero stays vertically centered in the frame at desktop and mobile sizes', async ({ page }) => {
+  for (const viewport of [
+    { width: 1366, height: 768 },
+    { width: 1366, height: 650 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/'); await ready(page);
+    const geometry = await page.evaluate(() => {
+      const frame = document.querySelector('.site-frame').getBoundingClientRect();
+      const hero = document.querySelector('.hero').getBoundingClientRect();
+      const container = document.querySelector('.view-container').getBoundingClientRect();
+      return { frame: { top: frame.top, bottom: frame.bottom }, hero: { top: hero.top, bottom: hero.bottom }, container: { top: container.top, bottom: container.bottom } };
+    });
+    const alignment = Math.abs((geometry.frame.top + geometry.frame.bottom) / 2 - (geometry.hero.top + geometry.hero.bottom) / 2);
+    expect(alignment, JSON.stringify({ viewport, geometry })).toBeLessThanOrEqual(1);
+  }
+});
+
 test('hero headline stays on one line and auto-fits after viewport changes', async ({ page }) => {
   await page.goto('/'); await ready(page);
   for (const width of [1254, 850, 390]) {
@@ -141,6 +160,27 @@ test('hero logo flies into place once and stays settled on hover', async ({ page
   await expect(logo).toHaveCSS('opacity', '1');
 });
 
+test('hero logo SVG and entrance animation restart when returning home', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/'); await ready(page);
+  const logo = page.locator('.hero-art-logo');
+  await expect(logo.locator('.hero-logo-svg')).toBeVisible();
+  await expect.poll(() => logo.evaluate(element =>
+    element.getAnimations().some(animation => animation.playState === 'finished'))).toBe(true);
+
+  await page.getByRole('button', { name: 'Docs', exact: true }).click();
+  await expect(page).toHaveURL(/\/docs$/);
+  await page.getByRole('button', { name: 'Home', exact: true }).click();
+  await expect(page).toHaveURL('/');
+  await expect(page.locator('.hero-art-logo .hero-logo-svg')).toBeVisible();
+  await expect(page.locator('.hero-art-logo')).toHaveCSS('animation-name', 'hero-logo-arrive');
+  await expect.poll(() => page.locator('.hero-art-logo').evaluate(element =>
+    element.getAnimations().some(animation => animation.playState === 'running'))).toBe(true);
+  await expect.poll(() => page.locator('.hero-art-logo').evaluate(element =>
+    element.getAnimations().some(animation => animation.playState === 'finished'))).toBe(true);
+  await expect(page.locator('.hero-art-logo')).toHaveCSS('opacity', '1');
+});
+
 test('hero logo inner square has a reduced-motion-aware animation', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/'); await ready(page);
@@ -180,9 +220,11 @@ test('CTA waves follow the pointer and burst on click', async ({ page }) => {
   const firstWave = cta.locator('.cta-wave--hover.cta-wave--first').first();
   await expect(firstWave).toHaveCSS('animation-name', 'cta-wave-hover');
   await expect(cta.locator('.cta-wave--first')).toHaveCSS('animation-delay', '0s');
-  await expect(cta.locator('.cta-wave--second')).toHaveCSS('animation-delay', '0.16s');
-  await expect(cta.locator('.cta-wave--third')).toHaveCSS('animation-delay', '0.32s');
+  await expect(cta.locator('.cta-wave--second')).toHaveCSS('animation-delay', '0.3s');
+  await expect(cta.locator('.cta-wave--third')).toHaveCSS('animation-delay', '0.6s');
   await expect(firstWave).toHaveCSS('animation-duration', '3.2s');
+  await expect(firstWave.evaluate(wave => wave.getAnimations()[0].effect.getKeyframes()[0].transform))
+    .resolves.toContain('scale(0.8)');
   await expect(firstWave).toHaveCSS('width', '42px');
   await expect(firstWave).toHaveCSS('animation-iteration-count', '1');
   await expect(firstWave).toHaveCSS('border-top-width', '0px');

@@ -18,20 +18,9 @@ const app = App(root, runtime);
 const frame = root.querySelector('.site-frame');
 const frameArt = mountFrameArt(root.querySelector('.frame-art'));
 const quantum = mountBanner(root.querySelector('.quantum-background'));
-const heroLogo = root.querySelector('.hero-art-logo');
 const parsedHeroLogo = new DOMParser().parseFromString(heroLogoMarkup, 'image/svg+xml');
 if (parsedHeroLogo.querySelector('parsererror')) throw new Error('Unable to parse the hero logo SVG.');
-const heroLogoSvg = document.importNode(parsedHeroLogo.documentElement, true);
-heroLogoSvg.setAttribute('class', 'hero-logo-svg');
-heroLogoSvg.setAttribute('aria-hidden', 'true');
-heroLogo.replaceChildren(heroLogoSvg);
 const heroLogoMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const syncHeroLogoMotion = () => {
-  if (heroLogoMotion.matches) heroLogoSvg.pauseAnimations();
-  else heroLogoSvg.unpauseAnimations();
-};
-syncHeroLogoMotion();
-heroLogoMotion.addEventListener('change', syncHeroLogoMotion);
 const routeNames = new Set(['home', 'features', 'docs', 'examples', 'roadmap', 'admin']);
 const contentPageNames = new Set(['features', 'docs', 'examples', 'roadmap']);
 const themeNames = ['neon', 'ultraviolet', 'midnight', 'apple'];
@@ -39,6 +28,46 @@ let config = null, pageView = null, adminView = null, csrf = '', pageRequest = n
 let activePage = 'home', requestVersion = 0, feedbackTimer, adminVersion = 0;
 let selectedTheme = 'apple', appliedKeys = [], previewing = false;
 let sectionScrollCleanup = null;
+
+function currentHeroLogo() {
+  const logo = root.querySelector('.hero-art-logo');
+  if (!logo) return null;
+  let svg = logo.querySelector('.hero-logo-svg');
+  if (!svg) {
+    svg = document.importNode(parsedHeroLogo.documentElement, true);
+    svg.setAttribute('class', 'hero-logo-svg');
+    svg.setAttribute('aria-hidden', 'true');
+    logo.replaceChildren(svg);
+  }
+  if (heroLogoMotion.matches) svg.pauseAnimations();
+  else svg.unpauseAnimations();
+  return { logo, art: logo.closest('.hero-art'), svg };
+}
+
+function restartHeroLogoEntrance() {
+  const heroLogo = currentHeroLogo();
+  if (!heroLogo) return;
+  heroLogo.logo.classList.remove('hero-logo-entering');
+  heroLogo.art.classList.remove('hero-logo-entering');
+  if (heroLogoMotion.matches) return;
+  void heroLogo.logo.offsetWidth;
+  heroLogo.logo.classList.add('hero-logo-entering');
+  heroLogo.art.classList.add('hero-logo-entering');
+}
+
+function syncHeroLogoMotion() {
+  const heroLogo = currentHeroLogo();
+  if (!heroLogo) return;
+  if (heroLogoMotion.matches) {
+    heroLogo.logo.classList.remove('hero-logo-entering');
+    heroLogo.art.classList.remove('hero-logo-entering');
+  } else if (activePage === 'home') {
+    restartHeroLogoEntrance();
+  }
+}
+
+restartHeroLogoEntrance();
+heroLogoMotion.addEventListener('change', syncHeroLogoMotion);
 
 const tokenNames = [...rawTokens.split(":root[data-theme=")[0].matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)]
   .filter(([, key, value]) => !value.includes('url(') && !key.startsWith('--icon-') && !key.startsWith('--breakpoint-'))
@@ -241,6 +270,7 @@ async function route(page, push = false, focus = false) {
     if (window.location.pathname !== path) history.pushState({}, '', path);
   }
   app.updateState({ page });
+  if (page === 'home') restartHeroLogoEntrance();
   frame.dataset.page = page;
   quantum.setPage(page);
   frame.classList.toggle('content-page', contentPageNames.has(page));
@@ -373,7 +403,7 @@ function triggerCtaWaves(button, event, kind) {
   const bounds = button.getBoundingClientRect();
   const x = event ? Math.max(0, Math.min(bounds.width, event.clientX - bounds.left)) : bounds.width / 2;
   const y = event ? Math.max(0, Math.min(bounds.height, event.clientY - bounds.top)) : bounds.height / 2;
-  const delays = kind === 'hover' ? [0, 160, 320] : [0, 150, 300];
+  const delays = kind === 'hover' ? [0, 300, 600] : [0, 280, 560];
   for (const [index, wave] of ['first', 'second', 'third'].entries()) {
     const element = document.createElement('span');
     element.className = `cta-wave cta-wave--${wave} cta-wave--${kind}`;

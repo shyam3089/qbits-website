@@ -141,7 +141,7 @@
   --hero-eyebrow-gap: 23px;
   --hero-logo-width: 50px;
   --hero-logo-height: 56px;
-  --eyebrow-size: 17px;
+  --eyebrow-size: 20px;
   --eyebrow-weight: 500;
   --eyebrow-line-width: 65px;
   --eyebrow-line-height: 1px;
@@ -202,7 +202,7 @@
   --scrollbar-width: 5px;
   --admin-max-width: 880px;
   --admin-grid-gap: 22px;
-  --admin-label-size: 14px;
+  --admin-label-size: 16px;
   --admin-label-gap: 8px;
   --admin-field-height: 46px;
   --admin-field-radius: 9px;

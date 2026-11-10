@@ -7,7 +7,7 @@ import QuantumBackground from "./components/QuantumBackground.qb"
 component App:
     page = "home"
     name = "Qbits"
-    eyebrow = "qbits. A MODERN UI FRAMEWORK"
+    eyebrow = "QBITS. A MODERN UI FRAMEWORK"
     headline = "Build modern apps with"
     highlight = "less code"
     description = "Python-like simple syntax. Reactive by design."
