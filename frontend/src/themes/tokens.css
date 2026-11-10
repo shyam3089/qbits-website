@@ -1,13 +1,13 @@
 :root {
   color-scheme: dark;
-  --font-ui: 'Poppins', sans-serif;
+  --font-ui: 'Google Sans Flex', sans-serif;
   --font-code: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
   --breakpoint-tablet: 1050px;
   --breakpoint-mobile: 700px;
   --breakpoint-compact: 420px;
   --page-bg: #010316;
   --frame-bg: #02031b;
-  --text: #f8f6ff;
+  --text: #262626;
   --muted: #d6d2e4;
   --subtle: #a9a1c1;
   --accent: #f05be9;
@@ -119,14 +119,8 @@
   --brand-symbol-width: 48px;
   --brand-symbol-height: 54px;
   --brand-font-size: 41px;
-  --brand-font-weight: 600;
+  --brand-font-weight: 500;
   --brand-letter-spacing: -1.1px;
-  --brand-wordmark-width: 100px;
-  --brand-wordmark-height: 43px;
-  --brand-wordmark-mask-width: 196px;
-  --brand-wordmark-mask-height: 94.6px;
-  --brand-wordmark-mask-y: -24.6px;
-  --brand-wordmark-scale: 1;
   --nav-links-left: 345px;
   --nav-links-right: 289px;
   --nav-font-size: 16px;
@@ -158,7 +152,7 @@
   --headline-tracking: -0.9px;
   --headline-margin-top: 30px;
   --headline-max-width: 1000px;
-  --description-size: 20.5px;
+  --description-size: 18px;
   --description-leading: 1.38;
   --description-margin-top: 21px;
   --actions-gap: 34px;
@@ -229,8 +223,7 @@
   --cursor-duration: 1.2s;
   --wave-mobile-opacity: 0.48;
   --wave-content-opacity: 0.12;
-  --logo-image: url('../assets/logo-symbol.webp');
-  --logo-wordmark-image: url('../assets/logo-original.png');
+  --logo-image: url('../assets/logo-symbol-original.png');
   --icon-github: url('@tabler/icons/outline/brand-github.svg');
   --icon-download: url('@tabler/icons/outline/download.svg');
   --icon-book: url('@tabler/icons/outline/book-2.svg');
@@ -322,12 +315,6 @@
 }
 
 /* Responsive token variants; conditions are expanded by Vite. */
-@media (--tablet) {
-  :root { --brand-wordmark-scale: 0.86; }
-}
-@media (--mobile) {
-  :root { --brand-wordmark-scale: 0.72; }
-}
 @media (--tablet) {
   :root { --page-gutter: 24px; --page-top: 20px; --page-bottom: 24px; --frame-min-height: 670px; --nav-padding-x: 34px; --brand-font-size: 35px; --brand-symbol-width: 40px; --brand-symbol-height: 47px; --nav-links-left: 220px; --nav-links-right: 205px; --nav-font-size: 16px; --nav-item-padding-x: 6px; --github-right: 34px; --github-width: 135px; --github-font-size: 16px; --hero-left: 49px; --hero-top: 170px; --headline-size: 43px; --headline-max-width: 720px; --description-size: 20px; --terminal-left: 49px; --content-left: 49px; --content-right: 49px; --content-title-size: 34px; }
 }

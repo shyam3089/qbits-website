@@ -1,7 +1,4 @@
-import '@fontsource/poppins/latin-300.css';
-import '@fontsource/poppins/latin-400.css';
-import '@fontsource/poppins/latin-500.css';
-import '@fontsource/poppins/latin-600.css';
+import '@fontsource/outfit/500.css';
 import './styles.css';
 import rawTokens from './themes/tokens.css?raw';
 import App from './App.qb';

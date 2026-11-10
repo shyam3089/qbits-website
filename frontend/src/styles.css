@@ -1,5 +1,13 @@
 @import './themes/tokens.css';
 
+@font-face {
+  font-family: 'Google Sans Flex';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('@fontsource-variable/google-sans-flex/files/google-sans-flex-latin-wght-normal.woff2') format('woff2');
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -174,14 +182,8 @@ p, h1, h2, h3 {
 
 .brand-wordmark {
   display: block;
-  width: calc(var(--brand-wordmark-width) * var(--brand-wordmark-scale));
-  height: calc(var(--brand-wordmark-height) * var(--brand-wordmark-scale));
-  color: transparent;
-  background: var(--text);
-  mask-image: var(--logo-wordmark-image);
-  mask-repeat: no-repeat;
-  mask-size: calc(var(--brand-wordmark-mask-width) * var(--brand-wordmark-scale)) calc(var(--brand-wordmark-mask-height) * var(--brand-wordmark-scale));
-  mask-position: right calc(var(--brand-wordmark-mask-y) * var(--brand-wordmark-scale));
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
   font-size: var(--brand-font-size);
   font-weight: var(--brand-font-weight);
   letter-spacing: var(--brand-letter-spacing);
@@ -281,9 +283,9 @@ p, h1, h2, h3 {
 .hero-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr);
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   column-gap: clamp(24px, 4vw, 70px);
-  align-items: center;
+  align-items: start;
 }
 
 .hero-copy {
@@ -295,10 +297,11 @@ p, h1, h2, h3 {
 .hero-art {
   position: relative;
   grid-column: 2;
-  grid-row: 1;
+  grid-row: 1 / 4;
   display: grid;
   justify-items: start;
   align-items: center;
+  align-self: center;
   min-width: 0;
   transform: translateX(-24px);
 }
@@ -359,12 +362,22 @@ p, h1, h2, h3 {
 }
 
 .hero-features {
-  grid-column: 1 / -1;
+  grid-column: 1;
   grid-row: 2;
   display: grid;
   grid-template-columns: repeat(3, max-content);
   gap: 0;
   margin-top: clamp(15px, 1vh, 45px);
+}
+
+.hero-actions {
+  grid-column: 1;
+  grid-row: 3;
+  justify-self: start;
+}
+
+.hero-actions {
+  justify-content: flex-start;
 }
 
 .hero-feature {
@@ -486,7 +499,7 @@ p, h1, h2, h3 {
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-top: 35px;
+  margin-top: 28px;
 }
 
 .action-button {

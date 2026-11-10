@@ -13,6 +13,8 @@
     "install:firefox": "node node_modules/playwright/cli.js install firefox"
   },
   "dependencies": {
+    "@fontsource-variable/google-sans-flex": "^5.3.2",
+    "@fontsource/outfit": "^5.3.0",
     "@fontsource/poppins": "^5.3.0",
     "@tabler/icons": "^3.51.0",
     "qbits": "1.0.1"

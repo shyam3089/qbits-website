@@ -21,50 +21,73 @@ component PageContent:
     div class="page-content":
         if loading:
             p class="loading-state" text="Loading…"
+
         else:
             if error != "":
                 h1 text="A small interruption."
+
                 p class="error-state" text=error
+
                 button class="small-button retry-page" text="Try again"
+
             else:
                 div class="content-layout":
                     if navigation:
                         div class="section-sidebar":
                             p class="section-sidebar-title" text="On this page"
+
                             for section in sections key=section.id:
                                 button class="section-link" text=section.title
+
                     div class="content-main":
                         h1 class="content-title" text=title
+
                         p class="content-intro" text=intro
+
                         for section in sections key=section.id:
                             section class="content-section":
                                 h2 text=section.title
+
                                 p text=section.body
+
                                 if section.code != "":
                                     div class="code-block":
                                         span class="code-language" text=section.language
+
                                         p class="code-source" text=section.code
+
                                         button class="copy-code":
                                             span class="icon copy-code-icon"
                                             span class="visually-hidden copy-code-label" text="Copy code"
+
                                 if section.demo != "":
                                     div class="live-demo":
                                         p class="demo-heading" text="Try it live"
+
                                         if section.demo == "counter":
                                             p class="demo-hint" text="Click the counter. Its label updates from local state. Reload the page to start again."
+
                                             Counter
+
                                         if section.demo == "greeting":
                                             p class="demo-hint" text="Type your name, then clear it to see the conditional branch change."
+
                                             Greeting
+
                                         if section.demo == "composition":
                                             p class="demo-hint" text="This panel renders a child counter through its slot. Click to update the child component."
+
                                             Composition
+
                                 if section.explanation != "":
                                     div class="code-explanation":
                                         h3 text="How it works"
+
                                         p text=section.explanation
+
                         div class="content-footer":
                             button class="text-button open-npm":
                                 span text="View package on npm"
                                 span class="icon external-icon"
+
                             button class="text-button open-admin" text="Site settings"

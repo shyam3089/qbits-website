@@ -15,8 +15,15 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
     const shell = document.querySelector('.frame-shell');
     const { width, height } = shell.ownerSVGElement.viewBox.baseVal;
     const filled = (x, y) => shell.isPointInFill(new DOMPoint(x, y));
+    const wordmark = document.querySelector('.brand-wordmark');
     return {
       frame: rect('.site-frame'), brand: rect('.brand'), github: rect('.github-button'), heroContent: rect('.hero-eyebrow'), actions: rect('.hero-actions'),
+      brandSymbolImage: getComputedStyle(document.querySelector('.brand-symbol')).backgroundImage,
+      brandWordmarkFont: getComputedStyle(wordmark).fontFamily,
+      brandWordmarkWeight: getComputedStyle(wordmark).fontWeight,
+      brandWordmarkLoaded: document.fonts.check('500 41px Outfit'),
+      bodyFont: getComputedStyle(document.body).fontFamily,
+      bodyFontLoaded: document.fonts.check('400 16px "Google Sans Flex"'),
       headline: (() => {
         const element = document.querySelector('.headline');
         return { width: element.clientWidth, scrollWidth: element.scrollWidth, whiteSpace: getComputedStyle(element).whiteSpace };
@@ -34,6 +41,12 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
   expect(layout.frame).toEqual({ x: 44, y: 20, width: 1166, height: 723 });
   expect(Math.abs((layout.brand.x - layout.frame.x) - ((layout.frame.x + layout.frame.width) - (layout.github.x + layout.github.width)))).toBeLessThan(1);
   expect(layout.heroContent.x).toBe(122);
+  expect(layout.brandSymbolImage).toContain('logo-symbol-original-');
+  expect(layout.brandWordmarkFont).toContain('Outfit');
+  expect(layout.brandWordmarkWeight).toBe('500');
+  expect(layout.brandWordmarkLoaded).toBe(true);
+  expect(layout.bodyFont).toContain('Google Sans Flex');
+  expect(layout.bodyFontLoaded).toBe(true);
   expect(layout.headline.whiteSpace).toBe('nowrap');
   expect(layout.headline.scrollWidth).toBeLessThanOrEqual(layout.headline.width);
   expect(layout.shell.fill).not.toBe('none');
@@ -42,6 +55,22 @@ test('approved desktop geometry, both curves, logo and contained UI', async ({ p
   expect(layout.shell.recesses).toEqual([true, true]);
   expect(layout.shell.besideRecesses).toEqual([false, false, false]);
   expect(layout.scroll).toBe(false); expect(errors).toEqual([]);
+  const heroOrder = await page.evaluate(() => {
+    const description = document.querySelector('.hero-description').getBoundingClientRect();
+    const features = document.querySelector('.hero-features').getBoundingClientRect();
+    const actionsElement = document.querySelector('.hero-actions');
+    const actions = actionsElement.getBoundingClientRect();
+    return {
+      descriptionBottom: description.bottom,
+      featuresTop: features.top,
+      featuresBottom: features.bottom,
+      actionsTop: actions.top,
+      actionsInsideLayout: actionsElement.parentElement === document.querySelector('.hero-layout'),
+    };
+  });
+  expect(heroOrder.featuresTop).toBeGreaterThanOrEqual(heroOrder.descriptionBottom);
+  expect(heroOrder.actionsTop).toBeGreaterThanOrEqual(heroOrder.featuresBottom);
+  expect(heroOrder.actionsInsideLayout).toBe(true);
   await page.screenshot({ path: '../artifacts/desktop.png', animations: 'disabled' });
 });
 
