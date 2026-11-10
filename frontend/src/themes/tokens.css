@@ -225,7 +225,7 @@
   --wave-content-opacity: 0.12;
   --logo-image: url('../assets/logo-symbol-original.png');
   --icon-github: url('../assets/github.svg');
-  --icon-download: url('@tabler/icons/outline/download.svg');
+  --icon-download: url('@tabler/icons/filled/download.svg');
   --icon-book: url('@tabler/icons/outline/book-2.svg');
   --icon-copy: url('@tabler/icons/outline/copy.svg');
   --icon-check: url('@tabler/icons/outline/check.svg');

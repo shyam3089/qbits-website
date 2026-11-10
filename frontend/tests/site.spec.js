@@ -250,6 +250,49 @@ test('all CTA buttons share one gradient glow on hover and focus', async ({ page
   expect(new Set(filters).size).toBe(1);
 });
 
+test('install button uses a filled download icon that animates downward', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/'); await ready(page);
+  const install = page.getByRole('button', { name: 'Install qbits', exact: true });
+  const icon = install.locator('.button-icon');
+  const iconStyles = await icon.evaluate(element => ({
+    maskImage: getComputedStyle(element).maskImage,
+    backgroundColor: getComputedStyle(element).backgroundColor,
+  }));
+  expect(decodeURIComponent(iconStyles.maskImage)).toContain('icons-tabler-filled icon-tabler-download');
+  expect(iconStyles.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+
+  await install.hover();
+  await expect.poll(() => icon.evaluate(element => getComputedStyle(element).animationName)).toBe('install-download-bounce');
+  await expect.poll(() => icon.evaluate(element => getComputedStyle(element).transform)).not.toBe('matrix(1, 0, 0, 1, 0, 0)');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => icon.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+});
+
+test('all CTA icons animate on hover and focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/'); await ready(page);
+  const ctas = [
+    { button: page.getByRole('button', { name: 'Documentation', exact: true }), icon: '.button-icon', animation: 'cta-icon-bob' },
+    { button: page.getByRole('button', { name: 'Install qbits', exact: true }), icon: '.button-icon', animation: 'install-download-bounce' },
+    { button: page.getByRole('link', { name: 'Qbits on GitHub' }), icon: '.github-icon', animation: 'cta-icon-bob' },
+  ];
+
+  for (const { button, icon: iconSelector, animation } of ctas) {
+    const icon = button.locator(iconSelector);
+    await button.hover();
+    await expect.poll(() => icon.evaluate(element => getComputedStyle(element).animationName)).toBe(animation);
+    await button.focus();
+    await expect.poll(() => icon.evaluate(element => getComputedStyle(element).animationName)).toBe(animation);
+  }
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const { button, icon: iconSelector } of ctas) {
+    await expect.poll(() => button.locator(iconSelector).evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+  }
+});
+
 test('navigation, history, direct URLs and both hero CTAs', async ({ page }) => {
   await page.goto('/'); await ready(page);
   for (const [label, slug, heading] of [

@@ -161,7 +161,7 @@ p, h1, h2, h3 {
 
 .brand {
   display: inline-flex;
-  align-items: center;
+  align-items: start;
   gap: var(--brand-gap);
   padding: 0;
   border: 0;
@@ -520,6 +520,21 @@ p, h1, h2, h3 {
     drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 18%, transparent));
 }
 
+.action-button:hover .button-icon, .action-button:focus-visible .button-icon,
+.github-button:hover .github-icon, .github-button:focus-visible .github-icon {
+  animation: cta-icon-bob 700ms ease-in-out infinite;
+}
+
+@keyframes cta-icon-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
 .button-install {
   background: var(--button-gradient);
   color: var(--button-ink);
@@ -535,6 +550,20 @@ p, h1, h2, h3 {
 
 .button-install .button-icon {
   --icon-image: var(--icon-download);
+}
+
+.button-install:hover .button-icon, .button-install:focus-visible .button-icon {
+  animation: install-download-bounce 700ms ease-in-out infinite;
+}
+
+@keyframes install-download-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(3px);
+  }
 }
 
 .terminal {
