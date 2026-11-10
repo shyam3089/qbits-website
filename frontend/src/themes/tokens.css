@@ -281,7 +281,14 @@
   --border: #1d1d1f;
   --border-soft: #0000001a;
   --surface: #f5f5f7;
-  --code-bg: #202020;
+  --code-bg: #f5f5f7;
+  --code-text: #1d1d1f;
+  --syntax-keyword: #7544e8;
+  --syntax-string: #16803c;
+  --syntax-number: #a34a00;
+  --syntax-builtin: #315fbd;
+  --syntax-comment: #6e6e73;
+  --syntax-punctuation: #515154;
   --field-bg: #ffffff;
   --success: #16803c;
   --error: #d70015;
@@ -290,8 +297,8 @@
   --inset-line: #bbb8d4;
   --structure-line: transparent;
   --structure-stroke: 1px;
-  --terminal-start: #d5d8e2;
-  --terminal-end: #c6cad7;
+  --terminal-start: #e3e7f3;
+  --terminal-end: #d6dae6;
   --button-start: #ff9c5c;
   --button-end: #c7008b;
   --button-ink: #ffffff;
